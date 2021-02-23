@@ -1,36 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using TheRockPaperScissors.Client.Services;
 
 namespace TheRockPaperScissors.Client.Models
 {
     internal class ClientController : IClientController
     {
-        private readonly HttpClient _client;
-        private readonly string _baseAddress = "http://localhost:5000";
+        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly Uri _baseAddress = new Uri("http://localhost:5000");
+        private readonly Serialization<User> serialization = new Serialization<User>();
 
         public ClientController()
         {
-            _client = new HttpClient()
-            {
-                BaseAddress = new Uri(_baseAddress)
-            };
+            _httpClient.BaseAddress = _baseAddress;
+            _httpClient.DefaultRequestHeaders
+                .Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public Guid Login(string login, string password)
+        public async Task<string> Login(string login, string password)
         {
-            //TODO: try to Login
-            var id = Guid.NewGuid();
-//            var token = await _client.GetAsync("/user/loggin");
-            return id;
+            var response = await _httpClient.PostAsync($"Users/Login",
+                                                       new StringContent(serialization.Serialize(new User(login, password)),
+                                                       Encoding.UTF8,
+                                                       "application/json"));
+            var content = await response.Content.ReadAsStringAsync();
+            return content;
         }
 
-        public Guid Registration(string login, string password)
+        public async Task<string> Registration(string login, string password)
         {
-            //TODO:: try to register
-            return Guid.NewGuid();
+            var json = serialization.Serialize(new User(login, password));
+            var response = await _httpClient.PostAsync($"Users/Register",
+                                                       new StringContent(serialization.Serialize(new User(login, password)),
+                                                       Encoding.UTF8,
+                                                       "application/json"));
+            var content = await response.Content.ReadAsStringAsync();
+            return content;
         }
     }
 }

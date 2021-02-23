@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TheRockPaperScissors.Server.Services;
 using TheRockPaperScissors.Server.Models;
+using System.Net.Mime;
 
 namespace TheRockPaperScissors.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Consumes(MediaTypeNames.Application.Json)]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -29,7 +30,7 @@ namespace TheRockPaperScissors.Server.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var token = await _userService.LoginUserAsync(user.Login, user.Password);
-            
+
             if (token == null)
             {
                 _logger.LogInformation($"Invalid login '{user.Login}' or password '{user.Password}'");
@@ -46,7 +47,6 @@ namespace TheRockPaperScissors.Server.Controllers
         public async Task<ActionResult<Guid>> Register([FromBody]User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-
 
             var token = await _userService.RegisterUserAsync(user);
 
