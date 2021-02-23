@@ -1,14 +1,15 @@
 ﻿using System;
 using TheRockPaperScissors.Client.Menu;
+using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             MenuView menu = new MenuView();
-            menu.Start();
+            await menu.Start();
         }
     }
 }

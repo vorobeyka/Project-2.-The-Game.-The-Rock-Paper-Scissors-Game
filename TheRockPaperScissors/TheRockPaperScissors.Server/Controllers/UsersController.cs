@@ -23,11 +23,7 @@ namespace TheRockPaperScissors.Server.Controllers
         }
 
         [HttpPost("login")]
-<<<<<<< HEAD
-        public async Task<ActionResult<Guid>> Login([FromBody] User user)
-=======
         public async Task<ActionResult<Guid>> Login([FromBody]User user)
->>>>>>> 3ea6535b3e3345a3264ae083bfc18fcfb965f411
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             /*var login = HttpContext.Request.Query["login"].FirstOrDefault();
@@ -51,11 +47,7 @@ namespace TheRockPaperScissors.Server.Controllers
         }
 
         [HttpPost("register")]
-<<<<<<< HEAD
-        public async Task<ActionResult<Guid>> Register([FromBody] User user)
-=======
         public async Task<ActionResult<Guid>> Register([FromBody]User user)
->>>>>>> 3ea6535b3e3345a3264ae083bfc18fcfb965f411
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

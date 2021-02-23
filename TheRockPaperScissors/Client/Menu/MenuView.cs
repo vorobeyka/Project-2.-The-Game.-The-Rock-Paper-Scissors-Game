@@ -1,6 +1,6 @@
 ﻿using System;
 using TheRockPaperScissors.Client.Models;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Text;
 
 namespace TheRockPaperScissors.Client.Menu
@@ -13,7 +13,7 @@ namespace TheRockPaperScissors.Client.Menu
         private MenuValidation MenuValidation = new MenuValidation();
         private ClientController ClientController = new ClientController();
 
-        public async void Start()
+        public async Task Start()
         {
             MenuDesign.WriteInColor(" THE ROCK PAPER SCISSORS", ConsoleColor.Cyan);
             Console.WriteLine(" 1 - Register\n 2 - Login");

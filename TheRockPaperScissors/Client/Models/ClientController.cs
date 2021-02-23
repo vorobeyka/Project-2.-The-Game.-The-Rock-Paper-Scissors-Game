@@ -19,14 +19,14 @@ namespace TheRockPaperScissors.Client.Models
 
         public async Task<string> Login(string login, string password)
         {
-            var response = await _httpClient.PostAsync($"Users/Login", new StringContent(serialization.Serialize(new User(login, password))));
+            var response = await _httpClient.PostAsync($"/Users/Login", new StringContent(serialization.Serialize(new User(login, password))));
             var content = await response.Content.ReadAsStringAsync();
             return content;
         }
 
         public async Task<string> Registration(string login, string password)
         {
-            var response = await _httpClient.PostAsync($"Users/Register", new StringContent(serialization.Serialize(new User(login, password))));
+            var response = await _httpClient.PostAsync($"/Users/Register", new StringContent(serialization.Serialize(new User(login, password))));
             var content = await response.Content.ReadAsStringAsync();
             return content;
         }
