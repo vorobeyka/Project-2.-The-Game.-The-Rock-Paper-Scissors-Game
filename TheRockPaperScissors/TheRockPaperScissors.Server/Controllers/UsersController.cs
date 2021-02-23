@@ -23,7 +23,7 @@ namespace TheRockPaperScissors.Server.Controllers
             _logger = logger;
         }
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<ActionResult<Guid>> Login([FromBody]User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -47,7 +47,7 @@ namespace TheRockPaperScissors.Server.Controllers
             return Ok(token);
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public async Task<ActionResult<Guid>> Register([FromBody]User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
