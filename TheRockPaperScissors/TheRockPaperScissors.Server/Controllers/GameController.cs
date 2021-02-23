@@ -20,5 +20,22 @@ namespace TheRockPaperScissors.Server.Controllers
             _logger = logger;
         }
 
+        /*[HttpGet("Test/{id}")]
+        public Task<ActionResult<string>> Test()
+        {
+
+        }
+
+        [HttpGet("Private/{id}")]
+        public Task<ActionResult<string>> Private()
+        {
+
+        }
+
+        [HttpGet("Public/{id}")]
+        public Task<ActionResult<string>> Public()
+        {
+
+        }*/
     }
 }

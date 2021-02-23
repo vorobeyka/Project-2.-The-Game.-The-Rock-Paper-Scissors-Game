@@ -23,37 +23,43 @@ namespace TheRockPaperScissors.Server.Controllers
             _logger = logger;
         }
 
-        [HttpGet("login")]
-        public async Task<ActionResult<Guid>> Login()
+        [HttpPost]
+        public async Task<ActionResult<Guid>> Login([FromBody]User user)
         {
-            var login = HttpContext.Request.Query["login"].FirstOrDefault();
-            var password = HttpContext.Request.Query["password"].FirstOrDefault();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            /*var login = HttpContext.Request.Query["login"].FirstOrDefault();
+            var password = HttpContext.Request.Query["password"].FirstOrDefault();*/
 
-            _logger.LogInformation($"Try to login with login {login} and password {password}");
+            //_logger.LogInformation($"Try to login with login {login} and password {password}");
 
-            var user = await _userService.GetUser(login, password);
-            if (user == null)
+            var token = await _userService.LoginUserAsync(user.Login, user.Password);
+            
+            //ar user = await _userService.GetUser(login, password);
+            if (token == null)
             {
-                _logger.LogInformation($"User with login '{login}' or password '{password}' not found");
+                _logger.LogInformation($"Invalid login '{user.Login}' or password '{user.Password}'");
 
                 return BadRequest($"Invalid login or password");
             }
 
-            _logger.LogInformation($"Success to login {login}");
+            _logger.LogInformation($"Success to login {user.Login}");
 
-            user.Token = Guid.NewGuid();
-            return Ok(user.Token);
+            return Ok(token);
         }
 
-        [HttpGet("register")]
-        public async Task<ActionResult<Guid>> Register()
+        [HttpPost]
+        public async Task<ActionResult<Guid>> Register([FromBody]User user)
         {
-            var login = HttpContext.Request.Query["login"].FirstOrDefault();
-            var password = HttpContext.Request.Query["password"].FirstOrDefault();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            _logger.LogInformation($"Try to register with login {login} and password {password}");
+            //var login = HttpContext.Request.Query["login"].FirstOrDefault();
+            //var password = HttpContext.Request.Query["password"].FirstOrDefault();
 
-            if (!IsPasswordValid(password))
+            //_logger.LogInformation($"Try to register with login {login} and password {password}");
+
+            var token = await _userService.RegisterUserAsync(user);
+
+            /*if (!IsPasswordValid(user.password))
             {
                 _logger.LogInformation($"Not valid password");
 
@@ -64,19 +70,12 @@ namespace TheRockPaperScissors.Server.Controllers
                 _logger.LogInformation($"Not valid login");
 
                 return BadRequest("Login length must be more than 2 and less than 100");
-            }
+            }*/
 
-            var user = new User(login, password)
+            if (token != null)
             {
-                Token = Guid.NewGuid()
-            };
-
-            var isOk = await _userService.RegisterUser(user);
-
-            if (isOk)
-            {
-                _logger.LogInformation($"Registered user with login '{login}' and password '{password}'");
-                return Ok(user.Token);
+                _logger.LogInformation($"Registered user with login '{user.Login}' and password '{user.Password}'");
+                return Ok(token);
             }
             return BadRequest("Ooops! Something was wrong...");
         }

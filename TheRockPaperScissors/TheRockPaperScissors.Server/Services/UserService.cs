@@ -12,28 +12,31 @@ namespace TheRockPaperScissors.Server.Services
         private readonly IList<User> _users = new List<User>();
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
-        public async Task<User> GetUser(string login, string password)
+        public async Task<Guid?> LoginUserAsync(string login, string password)
         {
             await _semaphoreSlim.WaitAsync();
-            var result = _users.FirstOrDefault(user => user.Login == login && user.Password == password);
+            var user = _users.FirstOrDefault(user => user.Login == login && user.Password == password);
             _semaphoreSlim.Release();
-            return result;
+
+            if (user == null) return null;
+
+            return Guid.NewGuid();
         }
 
-        public async Task<bool> RegisterUser(User user)
+        public async Task<Guid?> RegisterUserAsync(User user)
         {
             await _semaphoreSlim.WaitAsync();
             if (_users.FirstOrDefault(u => u.Login == user.Login) != null)
             {
                 _semaphoreSlim.Release();
-                return false;
+                return null;
             }
             else
             {
                 _users.Add(user);
                 _semaphoreSlim.Release();
             }
-            return true;
+            return Guid.NewGuid();
         }
     }
 }
