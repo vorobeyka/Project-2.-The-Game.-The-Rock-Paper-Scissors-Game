@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using TheRockPaperScissors.Server.Models;
 
-namespace TheRockPaperScissors.Server.Services
+namespace TheRockPaperScissors.Server.Services.Impl
 {
-    internal class UserService : IUserService
+    public class UserService : IUserService
     {
         private readonly IList<User> _users = new List<User>();
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
