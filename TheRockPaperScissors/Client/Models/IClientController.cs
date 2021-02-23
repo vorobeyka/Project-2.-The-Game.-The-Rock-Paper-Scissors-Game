@@ -5,7 +5,8 @@ namespace TheRockPaperScissors.Client.Models
 {
     internal interface IClientController
     {
-        Task Login(string login, string password);
-        Task Registration(string login, string password);
+        Task<string> Login(string login, string password);
+
+        Task<string> Registration(string login, string password);
     }
 }

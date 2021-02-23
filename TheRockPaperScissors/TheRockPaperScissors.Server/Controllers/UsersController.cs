@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,8 +22,8 @@ namespace TheRockPaperScissors.Server.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Guid>> Login([FromBody]User user)
+        [HttpPost("login")]
+        public async Task<ActionResult<Guid>> Login([FromBody] User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             /*var login = HttpContext.Request.Query["login"].FirstOrDefault();
@@ -33,7 +32,7 @@ namespace TheRockPaperScissors.Server.Controllers
             //_logger.LogInformation($"Try to login with login {login} and password {password}");
 
             var token = await _userService.LoginUserAsync(user.Login, user.Password);
-            
+
             //ar user = await _userService.GetUser(login, password);
             if (token == null)
             {
@@ -47,8 +46,8 @@ namespace TheRockPaperScissors.Server.Controllers
             return Ok(token);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Guid>> Register([FromBody]User user)
+        [HttpPost("register")]
+        public async Task<ActionResult<Guid>> Register([FromBody] User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
