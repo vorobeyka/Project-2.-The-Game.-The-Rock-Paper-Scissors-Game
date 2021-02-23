@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using TheRockPaperScissors.Client.Services;
 
@@ -15,18 +17,37 @@ namespace TheRockPaperScissors.Client.Models
         public ClientController()
         {
             _httpClient.BaseAddress = _baseAddress;
+            _httpClient.DefaultRequestHeaders
+                .Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task<string> Login(string login, string password)
         {
+<<<<<<< HEAD
             var response = await _httpClient.PostAsync($"/Users/Login", new StringContent(serialization.Serialize(new User(login, password))));
+=======
+            var json = serialization.Serialize(new User(login, password));
+            var response = await _httpClient.PostAsync($"Users/Login",
+                                                       new StringContent(json,
+                                                       Encoding.UTF8,
+                                                       "application/json"));
+>>>>>>> f7a3fefba4e59a4827745d67442e6ca74a3cfbd5
             var content = await response.Content.ReadAsStringAsync();
             return content;
         }
 
         public async Task<string> Registration(string login, string password)
         {
+<<<<<<< HEAD
             var response = await _httpClient.PostAsync($"/Users/Register", new StringContent(serialization.Serialize(new User(login, password))));
+=======
+            var json = serialization.Serialize(new User(login, password));
+            var response = await _httpClient.PostAsync($"Users/Register",
+                                                       new StringContent(json,
+                                                       Encoding.UTF8,
+                                                       "application/json"));
+>>>>>>> f7a3fefba4e59a4827745d67442e6ca74a3cfbd5
             var content = await response.Content.ReadAsStringAsync();
             return content;
         }

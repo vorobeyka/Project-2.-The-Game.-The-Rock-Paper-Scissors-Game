@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TheRockPaperScissors.Server.Services;
 using TheRockPaperScissors.Server.Models;
+using System.Net.Mime;
 
 namespace TheRockPaperScissors.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Consumes(MediaTypeNames.Application.Json)]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -26,18 +28,13 @@ namespace TheRockPaperScissors.Server.Controllers
         public async Task<ActionResult<Guid>> Login([FromBody]User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            /*var login = HttpContext.Request.Query["login"].FirstOrDefault();
-            var password = HttpContext.Request.Query["password"].FirstOrDefault();*/
-
-            //_logger.LogInformation($"Try to login with login {login} and password {password}");
 
             var token = await _userService.LoginUserAsync(user.Login, user.Password);
 
-            //ar user = await _userService.GetUser(login, password);
             if (token == null)
             {
                 _logger.LogInformation($"Invalid login '{user.Login}' or password '{user.Password}'");
-
+                
                 return BadRequest($"Invalid login or password");
             }
 
@@ -51,29 +48,11 @@ namespace TheRockPaperScissors.Server.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            //var login = HttpContext.Request.Query["login"].FirstOrDefault();
-            //var password = HttpContext.Request.Query["password"].FirstOrDefault();
-
-            //_logger.LogInformation($"Try to register with login {login} and password {password}");
-
             var token = await _userService.RegisterUserAsync(user);
-
-            /*if (!IsPasswordValid(user.password))
-            {
-                _logger.LogInformation($"Not valid password");
-
-                return BadRequest("Password length must be more than 5 and less than 100");
-            }
-            if (!IsLoginValid(login))
-            {
-                _logger.LogInformation($"Not valid login");
-
-                return BadRequest("Login length must be more than 2 and less than 100");
-            }*/
 
             if (token != null)
             {
-                _logger.LogInformation($"Registered user with login '{user.Login}' and password '{user.Password}'");
+                _logger.LogInformation($"Registered user with login '{user.Login}'");
                 return Ok(token);
             }
             return BadRequest("Ooops! Something was wrong...");

@@ -2,6 +2,7 @@
 using TheRockPaperScissors.Client.Models;
 using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Menu
 {
@@ -54,7 +55,5 @@ namespace TheRockPaperScissors.Client.Menu
                 }
             }
         }
-
-        
     }
 }
