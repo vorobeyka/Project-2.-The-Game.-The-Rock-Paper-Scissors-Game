@@ -1,60 +1,84 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text;
-using System.Threading;
-using TheRockPaperScissors.Server.Models;
-using TheRockPaperScissors.Server.Data;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
-
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using TheRockPaperScissors.Server.Services;
+using TheRockPaperScissors.Server.Models;
 
 namespace TheRockPaperScissors.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsersController : Controller
+    public class UsersController : ControllerBase
     {
-        //private string Path = "users.json";
+        private readonly IUserService _userService;
+        private readonly ILogger<UsersController> _logger;
 
-        private ConcurrentQueue<User> Users = new ConcurrentQueue<User>();
-
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(string login, string password)
+        public UsersController(IUserService userService, ILogger<UsersController> logger)
         {
-            if (ModelState.IsValid)
-            {
-                var user = Users.FirstOrDefault(u => u.Login == login && u.Password == GetHashString(password));
-                if (user != null)
-                {
-                    return RedirectToAction("");
-                }
-                ModelState.AddModelError("", "Incorrect login or password!");
-            }
-            return RedirectToAction("Login", "User");
+            _userService = userService ?? throw new ArgumentNullException(nameof(UserService));
+            _logger = logger;
         }
 
-        [HttpGet("Register")]
-        public async Task<IActionResult> Register(string login, string password)
+        [HttpGet("login")]
+        public async Task<ActionResult<Guid>> Login()
         {
-            if (ModelState.IsValid)
+            var login = HttpContext.Request.Query["login"].FirstOrDefault();
+            var password = HttpContext.Request.Query["password"].FirstOrDefault();
+
+            _logger.LogInformation($"Try to login with login {login} and password {password}");
+
+            var user = await _userService.GetUser(login, password);
+            if (user == null)
             {
-                User user = Users.FirstOrDefault(u => u.Login == login);
-                if (user == null)
-                {
-                    Users.Append(new User { Login = login, Password = GetHashString(password) });
-                    return Ok(Guid.NewGuid());
-                }
-                else
-                    ModelState.AddModelError("", "Incorrect login and/or password!");
+                _logger.LogInformation($"User with login '{login}' or password '{password}' not found");
+
+                return BadRequest($"Invalid login or password");
             }
-            return RedirectToAction("Register", "Owners");
+
+            _logger.LogInformation($"Success to login {login}");
+
+            user.Token = Guid.NewGuid();
+            return Ok(user.Token);
+        }
+
+        [HttpGet("register")]
+        public async Task<ActionResult<Guid>> Register()
+        {
+            var login = HttpContext.Request.Query["login"].FirstOrDefault();
+            var password = HttpContext.Request.Query["password"].FirstOrDefault();
+
+            _logger.LogInformation($"Try to register with login {login} and password {password}");
+
+            if (!IsPasswordValid(password))
+            {
+                _logger.LogInformation($"Not valid password");
+
+                return BadRequest("Password length must be more than 5 and less than 100");
+            }
+            if (!IsLoginValid(login))
+            {
+                _logger.LogInformation($"Not valid login");
+
+                return BadRequest("Login length must be more than 2 and less than 100");
+            }
+
+            var user = new User(login, password)
+            {
+                Token = Guid.NewGuid()
+            };
+
+            var isOk = await _userService.RegisterUser(user);
+
+            if (isOk)
+            {
+                _logger.LogInformation($"Registered user with login '{login}' and password '{password}'");
+                return Ok(user.Token);
+            }
+            return BadRequest("Ooops! Something was wrong...");
         }
 
         public string GetHashString(string s)
@@ -76,9 +100,14 @@ namespace TheRockPaperScissors.Server.Controllers
             return hash;
         }
 
-        public bool IsPasswordValid(string password)
+        private static bool IsPasswordValid(string password)
         {
-            return password.Length > 5;
+            return password.Length > 5 && password.Length < 100;
+        }
+
+        private static bool IsLoginValid(string login)
+        {
+            return login.Length > 2 && login.Length < 100;
         }
     }
 }

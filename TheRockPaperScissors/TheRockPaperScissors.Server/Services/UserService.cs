@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
+using TheRockPaperScissors.Server.Models;
+
+namespace TheRockPaperScissors.Server.Services
+{
+    internal class UserService : IUserService
+    {
+        private readonly IList<User> _users = new List<User>();
+        private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
+        public async Task<User> GetUser(string login, string password)
+        {
+            await _semaphoreSlim.WaitAsync();
+            var result = _users.FirstOrDefault(user => user.Login == login && user.Password == password);
+            _semaphoreSlim.Release();
+            return result;
+        }
+
+        public async Task<bool> RegisterUser(User user)
+        {
+            await _semaphoreSlim.WaitAsync();
+            if (_users.FirstOrDefault(u => u.Login == user.Login) != null)
+            {
+                _semaphoreSlim.Release();
+                return false;
+            }
+            else
+            {
+                _users.Add(user);
+                _semaphoreSlim.Release();
+            }
+            return true;
+        }
+    }
+}
