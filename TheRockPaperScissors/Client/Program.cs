@@ -1,4 +1,5 @@
 ﻿using System;
+using TheRockPaperScissors.Client.Menu;
 
 namespace TheRockPaperScissors.Client
 {
@@ -6,7 +7,8 @@ namespace TheRockPaperScissors.Client
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            MenuView menu = new MenuView();
+            menu.Start();
         }
     }
 }

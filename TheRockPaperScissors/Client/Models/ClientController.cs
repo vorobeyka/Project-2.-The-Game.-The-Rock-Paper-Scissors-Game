@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Models
 {
@@ -22,7 +23,7 @@ namespace TheRockPaperScissors.Client.Models
         {
             //TODO: try to Login
             var id = Guid.NewGuid();
-            var token = await _client.GetAsync("/user/loggin")
+//            var token = await _client.GetAsync("/user/loggin");
             return id;
         }
 
