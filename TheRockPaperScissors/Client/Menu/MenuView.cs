@@ -55,7 +55,5 @@ namespace TheRockPaperScissors.Client.Menu
                 }
             }
         }
-
-        
     }
 }

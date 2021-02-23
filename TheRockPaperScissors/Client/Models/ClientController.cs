@@ -24,8 +24,9 @@ namespace TheRockPaperScissors.Client.Models
 
         public async Task<string> Login(string login, string password)
         {
+            var json = serialization.Serialize(new User(login, password));
             var response = await _httpClient.PostAsync($"Users/Login",
-                                                       new StringContent(serialization.Serialize(new User(login, password)),
+                                                       new StringContent(json,
                                                        Encoding.UTF8,
                                                        "application/json"));
             var content = await response.Content.ReadAsStringAsync();
@@ -36,7 +37,7 @@ namespace TheRockPaperScissors.Client.Models
         {
             var json = serialization.Serialize(new User(login, password));
             var response = await _httpClient.PostAsync($"Users/Register",
-                                                       new StringContent(serialization.Serialize(new User(login, password)),
+                                                       new StringContent(json,
                                                        Encoding.UTF8,
                                                        "application/json"));
             var content = await response.Content.ReadAsStringAsync();

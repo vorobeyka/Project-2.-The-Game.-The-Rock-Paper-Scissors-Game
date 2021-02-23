@@ -6,9 +6,6 @@ namespace TheRockPaperScissors.Server.Models
     public class User
     {
         [Required]
-        public Guid Id { get; set; }
-
-        [Required]
         [StringLength(64, MinimumLength = 6)]
         public string Login { get; set; }
 
