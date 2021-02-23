@@ -1,4 +1,5 @@
 ﻿using System;
+using TheRockPaperScissors.Client.Models;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,41 +7,37 @@ namespace TheRockPaperScissors.Client.Menu
 {
     public class MenuView
     {
-        public ConsoleColor Color { get; set; }
+        private MenuDesign MenuDesign = new MenuDesign();
+        private GameMenu gameMenu = new GameMenu();
+        private MenuValidation MenuValidation = new MenuValidation();
 
-        public MenuView()
+        public async void Start()
         {
-            Color = ConsoleColor.Gray;
-        }
-
-        public void Start()
-        {
-            WriteInColor(" THE ROCK PAPER SCISSORS", ConsoleColor.Cyan);
+            ClientController clientController = new ClientController();
+            MenuDesign.WriteInColor(" THE ROCK PAPER SCISSORS", ConsoleColor.Cyan);
             Console.WriteLine(" 1 - Register\n 2 - Login");
-            int authCommand = CheckInteger(" Enter command : ", 2);
-            string login = InputString(" Enter login : ");
-            string password = InputString(" Enter password : ");
+            int authCommand = MenuValidation.CheckInteger(" Enter command : ", 2);
+            string login = MenuValidation.InputString(" Enter login : ");
+            string password = MenuValidation.InputString(" Enter password : ");
             string token;
             switch (authCommand)
             {
                 case 1:
                     throw new NotImplementedException();
-                    Console.WriteLine(" Register successful");
-                    break;
+                    //await clientController.Registration(login, password);
+                    //break;
                 case 2:
-                    if (login == "q" && password == "q")
-                    {
-                        Console.WriteLine(" Login successful");
-                        break;
-                    }
-                    throw new NotImplementedException();
-
+                    if (login == "q" && password == "qqqqqq")
+                        MenuDesign.WriteInColor(" Login successful", ConsoleColor.Cyan);
+                    //await clientController.Login(login, password);
+                    break;
             }
             Console.WriteLine(" 1 - Play\n 2 - Set color");
-            int menuCommand = CheckInteger(" Enter command : ", 2);
+            int menuCommand = MenuValidation.CheckInteger(" Enter command : ", 2);
             switch (menuCommand)
             {
                 case 1:
+                    gameMenu.Load();
                     throw new NotImplementedException();
                 case 2:
                     SetConsoleColor();
@@ -56,43 +53,14 @@ namespace TheRockPaperScissors.Client.Menu
             {
                 if (color == ConsoleColor.Black)
                     continue;
-                WriteInColor($" {number} - {Enum.GetNames(typeof(ConsoleColor))[number]}", color);
+                MenuDesign.WriteInColor($" {number} - {Enum.GetNames(typeof(ConsoleColor))[number]}", color);
                 number++;
             }
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine(" Enter number of color: ");
             int.TryParse(Console.ReadLine(), out var num);
-            Color = (ConsoleColor)Enum.GetValues(typeof(ConsoleColor)).GetValue(num);
-            Console.ForegroundColor = Color;
-        }
-
-        public void WriteInColor(string text, ConsoleColor consoleColor)
-        {
-            Console.ForegroundColor = consoleColor;
-            Console.WriteLine(text);
-            Console.ForegroundColor = Color;
-        }
-
-        public string InputString(string message)
-        {
-            Console.WriteLine(message);
-            string input = Console.ReadLine();
-            while (input.Trim().Length < 1)
-            {
-                Console.WriteLine("Invalid input. " + message);
-                input = Console.ReadLine();
-            }
-            return input;
-        }
-
-        public int CheckInteger(string message, int limit)
-        {
-            Console.WriteLine(message);
-            int command;
-            while (!int.TryParse(Console.ReadLine().Trim(), out command)
-                || command < 1 || command > limit)
-                Console.WriteLine("Invalid input. " + message);
-            return command;
+            MenuDesign.Color = (ConsoleColor)Enum.GetValues(typeof(ConsoleColor)).GetValue(num);
+            Console.ForegroundColor = MenuDesign.Color;
         }
     }
 }

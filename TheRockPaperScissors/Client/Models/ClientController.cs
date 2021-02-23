@@ -1,36 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Models
 {
     internal class ClientController : IClientController
     {
-        private readonly HttpClient _client;
-        private readonly string _baseAddress = "http://localhost:5000";
+        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly Uri _baseAddress = new Uri("http://localhost:5000");
 
         public ClientController()
         {
-            _client = new HttpClient()
-            {
-                BaseAddress = new Uri(_baseAddress)
-            };
+            _httpClient.BaseAddress = _baseAddress;
         }
 
-        public Guid Login(string login, string password)
+        public async Task Login(string login, string password)
         {
-            //TODO: try to Login
-            var id = Guid.NewGuid();
-//            var token = await _client.GetAsync("/user/loggin");
-            return id;
+            var response = await _httpClient.GetAsync($"Users/Login?login={login}&password={password}");
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
         }
 
-        public Guid Registration(string login, string password)
+        public async Task Registration(string login, string password)
         {
-            //TODO:: try to register
-            return Guid.NewGuid();
+            //TODO:: try to responce
+            var response = await _httpClient.GetAsync($"Users/Register?login={login}&password={password}");
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
         }
     }
 }

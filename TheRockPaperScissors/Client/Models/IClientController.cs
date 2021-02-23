@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Models
 {
     internal interface IClientController
     {
-        Guid Login(string login, string password);
-        Guid Registration(string login, string password);
+        Task Login(string login, string password);
+        Task Registration(string login, string password);
     }
 }
