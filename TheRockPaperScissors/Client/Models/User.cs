@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Models
 {
-    internal class User : IUser
+    public class User : IUser
     {
         public Guid Id { get; set; }
+
         public string Login { get; set; }
+
         public string Password { get; set; }
 
         public User(string login, string password)

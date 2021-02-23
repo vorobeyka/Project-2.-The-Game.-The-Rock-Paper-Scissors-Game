@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TheRockPaperScissors.Client.Menu;
-using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client
 {
@@ -9,8 +8,8 @@ namespace TheRockPaperScissors.Client
     {
         static async Task Main(string[] args)
         {
-            MenuView menu = new MenuView();
-            await menu.Start();
+            MainMenu menu = new MainMenu();
+            await menu.Load(ConsoleColor.Yellow);
         }
     }
 }
