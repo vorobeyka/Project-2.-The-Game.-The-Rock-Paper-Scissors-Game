@@ -9,6 +9,7 @@ namespace TheRockPaperScissors.Server.Services
     {
         Task AddAsync(ISeriesService series);
         Task RemoveAsync(ISeriesService series);
-
+        Task RemoveAsync(Func<IEnumerable<ISeriesService>, ISeriesService> factory);
+        Task<ISeriesService> GetAsync(Func<IEnumerable<ISeriesService>, ISeriesService> factory);
     }
 }
