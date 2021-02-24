@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using TheRockPaperScissors.Server.Services;
 using TheRockPaperScissors.Server.Models;
 using System.Net.Mime;
+using TheRockPaperScissors.Server.Services.Impl;
 
 namespace TheRockPaperScissors.Server.Controllers
 {
@@ -16,12 +17,16 @@ namespace TheRockPaperScissors.Server.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IStorage<Guid, User> _authorizedUsers;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUserService userService, ILogger<UsersController> logger)
+        public UsersController(IUserService userService,
+                               IStorage<Guid, User> authorizedUsers,
+                               ILogger<UsersController> logger)
         {
+            _authorizedUsers = authorizedUsers ?? throw new ArgumentNullException(nameof(authorizedUsers));
             _userService = userService ?? throw new ArgumentNullException(nameof(UserService));
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpPost("login")]
@@ -39,6 +44,7 @@ namespace TheRockPaperScissors.Server.Controllers
             }
 
             _logger.LogInformation($"Success to login {user.Login}");
+            await _authorizedUsers.AddAsync((Guid)token, user);
 
             return Ok(token);
         }
@@ -53,8 +59,10 @@ namespace TheRockPaperScissors.Server.Controllers
             if (token != null)
             {
                 _logger.LogInformation($"Registered user with login '{user.Login}'");
+                await _authorizedUsers.AddAsync((Guid)token, user);
                 return Ok(token);
             }
+
             return BadRequest("Ooops! Something was wrong...");
         }
 
@@ -75,16 +83,6 @@ namespace TheRockPaperScissors.Server.Controllers
                 hash += string.Format("{0:x2}", b);
 
             return hash;
-        }
-
-        private static bool IsPasswordValid(string password)
-        {
-            return password.Length > 5 && password.Length < 100;
-        }
-
-        private static bool IsLoginValid(string login)
-        {
-            return login.Length > 2 && login.Length < 100;
         }
     }
 }

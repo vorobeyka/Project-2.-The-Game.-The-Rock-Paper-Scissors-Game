@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Server.Enums
 {
-    internal enum GameType
+    public enum GameType
     {
         Test,
         Private,

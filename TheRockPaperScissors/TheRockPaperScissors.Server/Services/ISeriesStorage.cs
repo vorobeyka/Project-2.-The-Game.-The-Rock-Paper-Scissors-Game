@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Server.Services
 {
-    public interface IGameService
+    public interface ISeriesStorage
     {
-        
+        Task AddAsync(ISeriesService series);
+        Task RemoveAsync(ISeriesService series);
+
     }
 }
