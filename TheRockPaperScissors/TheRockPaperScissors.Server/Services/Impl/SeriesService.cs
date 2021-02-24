@@ -11,5 +11,6 @@ namespace TheRockPaperScissors.Server.Services.Impl
         public Guid FirstId { get; set; }
         public Guid? SecondId { get; set; }
         public GameType Type { get; set; }
+        public string GameId { get; set; }
     }
 }
