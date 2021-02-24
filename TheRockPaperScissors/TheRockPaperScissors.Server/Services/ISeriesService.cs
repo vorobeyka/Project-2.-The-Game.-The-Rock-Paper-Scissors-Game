@@ -12,5 +12,9 @@ namespace TheRockPaperScissors.Server.Services
         Guid? SecondId { get; set; }
         GameType Type { get; set; }
         string GameId { get; set; }
+        IEnumerable<IGameRound> Rounds { get; set; }
+
+        bool IsRegisteredId(Guid id);
+        Task<IGameRound> GetOpenRoundAsync();
     }
 }

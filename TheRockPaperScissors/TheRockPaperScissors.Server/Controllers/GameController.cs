@@ -108,11 +108,48 @@ namespace TheRockPaperScissors.Server.Controllers
             return Ok();
         }
 
-        [HttpGet("Play/{token}")]
-        public async Task<ActionResult> Play()
+        [HttpGet("start/{token}")]
+        public async Task<ActionResult> Start(
+            [FromRoute(Name = "token")]string token)
         {
             await Task.Delay(500);
+            var id = Guid.Parse(token);
+            var game = await _seriesStorage.GetAsync(storage =>
+                storage.FirstOrDefault(series => series.IsRegisteredId(id)));
 
+            var time = 0;
+            while (game.SecondId == null && time < 300)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                time++;
+            }
+            if (time == 300) return NotFound("Time is out! No one connected to you");
+            /*if (game == null) return BadRequest("User not in game");
+            var openRound = await game.GetOpenRoundAsync();
+            if (openRound == null) openRound = round;
+
+            round.Moves.TryAdd(id, null);*/
+            return Ok(true);
+        }
+
+        [HttpPost("round/{token}")]
+        public async Task<ActionResult> Round(
+            [FromRoute(Name = "token")]string token,
+            [FromServices]IGameRound round)
+        {
+            await Task.Delay(500);
+            var id = Guid.Parse(token);
+            var game = await _seriesStorage.GetAsync(storage =>
+                storage.FirstOrDefault(series => series.IsRegisteredId(id)));
+            var openRound = await game.GetOpenRoundAsync();
+            openRound.Moves[id] = "syka";
+            return Ok();
+        }
+
+        [HttpGet("getRound/{token}")]
+        public async Task<ActionResult> GetRound()
+        {
+            await Task.Delay(500);
             return Ok();
         }
     }
