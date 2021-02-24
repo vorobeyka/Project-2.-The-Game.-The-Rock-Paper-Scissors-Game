@@ -30,7 +30,7 @@ namespace TheRockPaperScissors.Server.Controllers
             _logger = logger;
         }
 
-        [HttpGet("test/{token}")]
+        [HttpPost("test/{token}")]
         public async Task<ActionResult> Test(
             [FromServices]ISeriesService series,
             [FromRoute(Name = "token")]string token)
@@ -56,11 +56,12 @@ namespace TheRockPaperScissors.Server.Controllers
 
             if (!await _users.ContainAsync(guid)) return NotFound($"Not found user with token {guid}");
 
+            var gameId = new Random().Next(1000, 9999).ToString();
             series.Type = GameType.Private;
             series.FirstId = guid;
-            series.GameId = new Random().Next(1000, 9999).ToString();
+            series.GameId = gameId;
             await _seriesStorage.AddAsync(series);
-            return Ok(token);
+            return Ok(gameId);
         }
 
         [HttpPost("private/{token}/{id}")]
@@ -78,7 +79,7 @@ namespace TheRockPaperScissors.Server.Controllers
 
             if (series == null) return NotFound("Not found series");
             series.SecondId = Guid.Parse(token);
-            return Ok(series);
+            return Ok();
         }
 
         [HttpPost("public/{token}")]
@@ -104,6 +105,14 @@ namespace TheRockPaperScissors.Server.Controllers
                 series.Type = GameType.Public;
                 await _seriesStorage.AddAsync(series);
             }
+            return Ok();
+        }
+
+        [HttpGet("Play/{token}")]
+        public async Task<ActionResult> Play()
+        {
+            await Task.Delay(500);
+
             return Ok();
         }
     }
