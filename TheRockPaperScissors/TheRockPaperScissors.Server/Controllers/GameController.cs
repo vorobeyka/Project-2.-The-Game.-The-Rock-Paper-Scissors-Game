@@ -30,10 +30,99 @@ namespace TheRockPaperScissors.Server.Controllers
             _logger = logger;
         }
 
-        [HttpPost("test/{token}")]
+        [HttpPost]
+        public async Task<ActionResult> Game(
+            [FromServices] ISeriesService series,
+            [FromBody] Game game)
+        {
+            await Task.Delay(500);
+            _logger.LogInformation(game.UserId);
+            var userId = Guid.Parse(game.UserId);
+
+            if (!await _users.ContainAsync(userId)) return NotFound($"Not found user with token {userId}");
+
+            var openSeries = await _seriesStorage.GetAsync(storage =>
+                storage.FirstOrDefault(s => s.SecondId == null && s.Type == game.Type && s.GameId == game.GameId))
+                ?? series;
+
+            openSeries.Type = game.Type;
+            try
+            {
+                openSeries.SetProperties(userId, game.GameId);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Invalid private id or room is full");
+            }
+
+            await _seriesStorage.AddAsync(openSeries);
+            return Ok(openSeries.GameId);
+        }
+
+        [HttpGet("start/{token}")]
+        public async Task<ActionResult> Start([FromRoute(Name = "token")] string token)
+        {
+            await Task.Delay(500);
+            var id = Guid.Parse(token);
+            var game = await _seriesStorage.GetAsync(storage =>
+                storage.FirstOrDefault(series => series.IsRegisteredId(id)));
+
+            var time = 0;
+            while (game.SecondId == null && time < 300)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                time++;
+            }
+            if (time == 300) return NotFound("Time is out! No one connected to you");
+            return Ok(true);
+        }
+
+        [HttpPost("round")]
+        public async Task<ActionResult> Round(
+            [FromBody]Round round,
+            [FromServices] IRoundService roundService)
+        {
+            await Task.Delay(500);
+            var id = Guid.Parse(round.Id);
+            var game = await _seriesStorage.GetAsync(storage => storage.FirstOrDefault(series => series.IsRegisteredId(id)));
+            var openRound = game.RoundCount == 0
+                ? await game.AddRoundAsync(roundService)
+                : await game.GetOpenRoundAsync();
+
+            _logger.LogInformation(game.RoundCount.ToString());
+            if (!openRound.AddMove(id, round.Move)) return BadRequest("Can't add round(");
+            return Ok();
+        }
+
+        [HttpGet("roundResult/{token}")]
+        public async Task<ActionResult> GetRoundResult([FromRoute(Name = "token")] string token)
+        {
+            await Task.Delay(500);
+            var id = Guid.Parse(token);
+            var game = await _seriesStorage.GetAsync(storage =>storage.FirstOrDefault(series => series.IsRegisteredId(id)));
+            var round = await game.GetLastRoundAsync();
+            var result = await round.GetResultAsync(id);
+
+            var otherId = id == game.FirstId ? game.SecondId : game.FirstId;
+            var str = result;
+            str += await round.GetResultAsync((Guid)otherId);
+
+
+            if (string.IsNullOrEmpty(result)) return await GetSeriesResult();
+            else return Ok(str);
+        }
+
+        [HttpGet("seriesResult")]
+        public async Task<ActionResult> GetSeriesResult()
+        {
+            await Task.Delay(500);
+            return Ok("Series result");
+        }
+
+        /*[HttpPost("test/{token}")]
         public async Task<ActionResult> Test(
             [FromServices]ISeriesService series,
-            [FromRoute(Name = "token")]string token)
+            [FromRoute(Name = "token")] string token)
         {
             await Task.Delay(500);
             var guid = Guid.Parse(token);
@@ -49,7 +138,7 @@ namespace TheRockPaperScissors.Server.Controllers
         [HttpPost("private/{token}")]
         public async Task<ActionResult> PrivateCreate(
             [FromServices]ISeriesService series,
-            [FromRoute(Name = "token")]string token)
+            [FromRoute(Name = "token")] string token)
         {
             await Task.Delay(500);
             var guid = Guid.Parse(token);
@@ -66,8 +155,8 @@ namespace TheRockPaperScissors.Server.Controllers
 
         [HttpPost("private/{token}/{id}")]
         public async Task<ActionResult> PrivateConnect(
-            [FromRoute(Name = "token")]string token,
-            [FromRoute(Name = "id")]string id)
+            [FromRoute(Name = "token")] string token,
+            [FromRoute(Name = "id")] string id)
         {
             await Task.Delay(500);
             var guid = Guid.Parse(token);
@@ -85,7 +174,7 @@ namespace TheRockPaperScissors.Server.Controllers
         [HttpPost("public/{token}")]
         public async Task<ActionResult> Public(
             [FromServices] ISeriesService series,
-            [FromRoute(Name = "token")]string token)
+            [FromRoute(Name = "token")] string token)
         {
             await Task.Delay(500);
             var guid = Guid.Parse(token);
@@ -106,51 +195,6 @@ namespace TheRockPaperScissors.Server.Controllers
                 await _seriesStorage.AddAsync(series);
             }
             return Ok();
-        }
-
-        [HttpGet("start/{token}")]
-        public async Task<ActionResult> Start(
-            [FromRoute(Name = "token")]string token)
-        {
-            await Task.Delay(500);
-            var id = Guid.Parse(token);
-            var game = await _seriesStorage.GetAsync(storage =>
-                storage.FirstOrDefault(series => series.IsRegisteredId(id)));
-
-            var time = 0;
-            while (game.SecondId == null && time < 300)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                time++;
-            }
-            if (time == 300) return NotFound("Time is out! No one connected to you");
-            /*if (game == null) return BadRequest("User not in game");
-            var openRound = await game.GetOpenRoundAsync();
-            if (openRound == null) openRound = round;
-
-            round.Moves.TryAdd(id, null);*/
-            return Ok(true);
-        }
-
-        [HttpPost("round/{token}")]
-        public async Task<ActionResult> Round(
-            [FromRoute(Name = "token")]string token,
-            [FromServices]IGameRound round)
-        {
-            await Task.Delay(500);
-            var id = Guid.Parse(token);
-            var game = await _seriesStorage.GetAsync(storage =>
-                storage.FirstOrDefault(series => series.IsRegisteredId(id)));
-            var openRound = await game.GetOpenRoundAsync();
-            openRound.Moves[id] = "syka";
-            return Ok();
-        }
-
-        [HttpGet("getRound/{token}")]
-        public async Task<ActionResult> GetRound()
-        {
-            await Task.Delay(500);
-            return Ok();
-        }
+        }*/
     }
 }

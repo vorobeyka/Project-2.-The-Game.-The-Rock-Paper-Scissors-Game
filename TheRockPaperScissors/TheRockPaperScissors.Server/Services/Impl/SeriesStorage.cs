@@ -41,5 +41,12 @@ namespace TheRockPaperScissors.Server.Services.Impl
             return item;
         }
 
+        public async Task<ISeriesService> GetByIdAsync(Guid id)
+        {
+            await _semaphoreSlim.WaitAsync();
+            var item = _seriesStorage.FirstOrDefault(series => series.IsRegisteredId(id));
+            _semaphoreSlim.Release();
+            return item;
+        }
     }
 }
