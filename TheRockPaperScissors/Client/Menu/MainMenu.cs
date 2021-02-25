@@ -1,5 +1,6 @@
 ﻿using System;
 using TheRockPaperScissors.Client.Models;
+using TheRockPaperScissors.Client.Game.Enums;
 using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Menu
@@ -21,11 +22,11 @@ namespace TheRockPaperScissors.Client.Menu
 
             while (command != 3)
             {
-                Console.Clear();
+                //Console.Clear();
                 Console.WriteLine($" USER : {User.Login}");
-                MenuDesign.WriteHeader("MAIN MENU");
+                MenuDesign.WriteHeader("main menu");
                 Console.WriteLine(" 1 - Play\n 2 - Set color\n 3 - Exit");
-                command = MenuValidation.CheckInteger(" Enter number ", 3);
+                command = MenuValidation.CheckInteger(" Enter number >> ", 3);
 
                 switch (command)
                 {

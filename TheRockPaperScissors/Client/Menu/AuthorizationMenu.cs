@@ -2,6 +2,7 @@
 using TheRockPaperScissors.Client.Models;
 using TheRockPaperScissors.Client.Services;
 using System.Threading.Tasks;
+using TheRockPaperScissors.Client.Exceptions;
 
 namespace TheRockPaperScissors.Client.Menu
 {
@@ -14,14 +15,13 @@ namespace TheRockPaperScissors.Client.Menu
         public async Task<User> Load(ConsoleColor color)
         {
             Console.ForegroundColor = color;
-            _menuDesign.WriteHeader("LET'S START!");
+            _menuDesign.WriteHeader("let's start!");
             Console.WriteLine(" 1 - Sign Up\n 2 - Sign In");
 
-            int command = _menuValidation.CheckInteger(" Enter command : ", 2);
-            string login = _menuValidation.InputString(" Enter login : ");
-            string password = _menuValidation.InputString(" Enter password : ");
+            int command = _menuValidation.CheckInteger(" Enter command >> ", 2);
+            string login = _menuValidation.InputString(" Enter login >> ", 4);
+            string password = _menuValidation.InputString(" Enter password >> ", 6);
             Guid? token = Guid.NewGuid();
-
             switch (command)
             {
                 case 1:
@@ -34,8 +34,7 @@ namespace TheRockPaperScissors.Client.Menu
 
             if (token == null)
             {
-                Console.WriteLine(" Authorization failed.");
-                return null;
+                throw new AuthorizationFailedException(" Authorization failed.");
             }
             else
             {

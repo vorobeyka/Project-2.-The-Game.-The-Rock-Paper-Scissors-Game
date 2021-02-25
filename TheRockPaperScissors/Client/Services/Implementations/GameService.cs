@@ -16,7 +16,6 @@ namespace TheRockPaperScissors.Client.Services
         public async Task<string> StartGame(Guid token)
         {
             var response = await _httpClient.GetAsync($"Game/start/{token}");
-            Console.WriteLine(response.StatusCode);
 
             return await response.Content.ReadAsStringAsync();
         }

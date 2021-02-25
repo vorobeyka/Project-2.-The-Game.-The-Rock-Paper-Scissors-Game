@@ -35,6 +35,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 timer++;
             }
+
             if (timer == 20) return "";
 
             var secondId = Moves.First(move => move.Key != id).Key;
@@ -42,6 +43,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
             var move2 = Moves.First(move => move.Key != id).Value;
 
             _result.TryAdd(id, GetResultString(Moves[id], Moves[secondId], statistics));
+
             return _result[id];
         }
 
@@ -49,16 +51,16 @@ namespace TheRockPaperScissors.Server.Services.Impl
 
         private string GetResultString(Move firstPlayerMove, Move secondPlayerMove, Statistics statistics)
         {
-            var result = $"Your move : {firstPlayerMove}\nOpponent move : {secondPlayerMove}\nResult: ";
+            var result = $" You      : {firstPlayerMove}| Opponent : {secondPlayerMove}|~";
             var gameResult = GameAlgorithm.GetRound(firstPlayerMove, secondPlayerMove);
             statistics.UpdateMove(firstPlayerMove);
             statistics.UpdateResult(gameResult);
 
             switch (gameResult)
             {
-                case GameResult.Win: return result += "you won";
-                case GameResult.Loss: return result += "you lose";
-                default: return result += "draw";
+                case GameResult.Win: return result += "YOU WON";
+                case GameResult.Loss: return result += "YOU LOSE";
+                default: return result += "DRAW";
             }
         }
     }

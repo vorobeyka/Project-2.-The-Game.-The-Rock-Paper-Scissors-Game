@@ -4,14 +4,14 @@ namespace TheRockPaperScissors.Client.Menu
 {
     public class MenuValidation
     {
-        public string InputString(string message)
+        public string InputString(string message, int length)
         {
-            Console.WriteLine(message);
+            Console.Write(message);
             string input = Console.ReadLine();
 
-            while (input.Trim().Length < 1)
+            while (input.Trim().Length < length)
             {
-                Console.WriteLine("Invalid input. " + message);
+                Console.Write($" Invalid input length. {length} characters minimum required." + message);
                 input = Console.ReadLine();
             }
 
@@ -20,11 +20,11 @@ namespace TheRockPaperScissors.Client.Menu
 
         public int CheckInteger(string message, int limit)
         {
-            Console.WriteLine(message);
+            Console.Write(message);
             int command;
 
             while (!int.TryParse(Console.ReadLine().Trim(), out command) || command < 1 || command > limit)
-                Console.WriteLine("Invalid input. " + message);
+                Console.Write(" Invalid input." + message);
 
             return command;
         }

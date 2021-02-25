@@ -101,7 +101,7 @@ namespace TheRockPaperScissors.Server.Controllers
             var round = await game.GetLastRoundAsync();
             var user = await _users.GetAsync(id);
             var result = await round.GetResultAsync(id, user.Statistics);
-
+            
             //HttpStatusCode.Created
             if (string.IsNullOrEmpty(result)) return NotFound();
             else return Ok(result);

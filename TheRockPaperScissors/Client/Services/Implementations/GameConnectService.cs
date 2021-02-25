@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
@@ -19,7 +18,6 @@ namespace TheRockPaperScissors.Client.Services
             var response = await _httpClient.PostAsync($"Game",
                            new StringContent(json, Encoding.UTF8, "application/json"));
 
-            Console.WriteLine(" Waiting for another player...");
             return await response.Content.ReadAsStringAsync();
         }
 
