@@ -29,6 +29,7 @@ namespace TheRockPaperScissors.Server
             services.AddSingleton(typeof(IStorage<,>), typeof(Storage<,>));
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISeriesStorage, SeriesStorage>();
+            services.AddSingleton<IDatabaseService, DatabaseService>();
 
             services.AddTransient<ISeriesService, SeriesService>();
             services.AddTransient<IRoundService, RoundService>();
