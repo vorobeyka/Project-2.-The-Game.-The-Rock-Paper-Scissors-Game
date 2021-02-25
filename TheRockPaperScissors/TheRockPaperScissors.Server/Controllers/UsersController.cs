@@ -50,7 +50,8 @@ namespace TheRockPaperScissors.Server.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<Guid>> Register([FromBody]User user)
+        public async Task<ActionResult<Guid>> Register(
+            [FromBody]User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

@@ -11,6 +11,13 @@ namespace TheRockPaperScissors.Server.Services.Impl
     {
         private readonly IList<User> _users = new List<User>();
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        private readonly IDatabaseService _db;
+
+        public UserService(IDatabaseService db)
+        {
+            _db = db;
+            _users = db.GetAllUsers();
+        }
 
         public async Task<Guid?> LoginUserAsync(string login, string password)
         {
@@ -19,7 +26,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
             _semaphoreSlim.Release();
 
             if (user == null) return null;
-
+            
             return Guid.NewGuid();
         }
 
@@ -35,6 +42,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
             {
                 _users.Add(user);
                 _semaphoreSlim.Release();
+                await _db.AddUserAsync(user);
             }
             return Guid.NewGuid();
         }
