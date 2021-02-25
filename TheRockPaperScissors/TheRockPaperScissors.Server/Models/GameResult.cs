@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Server.Models
 {
-    public class GameResult
+    public enum GameResult
     {
-        public Result Result { get; }
-
-        public DateTime Time { get; }
+        Win,
+        Draw,
+        Loss
     }
 }

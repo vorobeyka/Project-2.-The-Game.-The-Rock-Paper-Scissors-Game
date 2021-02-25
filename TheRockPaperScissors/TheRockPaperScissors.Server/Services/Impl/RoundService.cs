@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TheRockPaperScissors.Server.Enums;
+using TheRockPaperScissors.Server.Models;
+using TheRockPaperScissors.Server.Services.Algorithms;
 
 namespace TheRockPaperScissors.Server.Services.Impl
 {
     public class RoundService : IRoundService
     {
+        private readonly ConcurrentDictionary<Guid, string> _result = new ConcurrentDictionary<Guid, string>();
         public ConcurrentDictionary<Guid, Move> Moves { get; }
         public bool IsOpen => Moves.Count < 2;
 
@@ -34,9 +37,33 @@ namespace TheRockPaperScissors.Server.Services.Impl
             }
             if (timer == 20) return "";
 
-            //TODO: return normal result
+            if (_result.IsEmpty)
+            {
+                var secondId = Moves.First(move => move.Key != id).Key;
+                var move1 = Moves[id];
+                var move2 = Moves.First(move => move.Key != id).Value;
 
-            return $"{Moves}\n your move - {Moves[id]}";
+                _result.GetOrAdd(secondId, GetResultString(Moves[id], Moves[secondId]));
+                return _result.GetOrAdd(id, GetResultString(Moves[id], Moves[secondId]));
+            }
+            else
+            {
+                return _result[id];
+            }
+        }
+
+        public string GetResult(Guid id) => _result[id];
+
+        private string GetResultString(Move firstPlayerMove, Move secondPlayerMove)
+        {
+            var result = $"Your move : {firstPlayerMove}\nOpponent move : {secondPlayerMove}\nResult: ";
+            var gameResult = GameAlgorithm.GetRound(firstPlayerMove, secondPlayerMove);
+            switch (gameResult)
+            {
+                case GameResult.Win: return result += "you won";
+                case GameResult.Loss: return result += "you lose";
+                default: return result += "draw";
+            }
         }
     }
 }

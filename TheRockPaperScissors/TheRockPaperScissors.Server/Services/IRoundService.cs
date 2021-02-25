@@ -9,10 +9,11 @@ namespace TheRockPaperScissors.Server.Services
 {
     public interface IRoundService
     {
+        ConcurrentDictionary<Guid, Move> Moves { get; }
         bool IsOpen { get; }
 
         bool AddMove(Guid id, Move move);
         Task<string> GetResultAsync(Guid id);
-        ConcurrentDictionary<Guid, Move> Moves { get; }
+        string GetResult(Guid id);
     }
 }

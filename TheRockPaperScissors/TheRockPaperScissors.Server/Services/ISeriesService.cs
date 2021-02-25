@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,13 +13,14 @@ namespace TheRockPaperScissors.Server.Services
         Guid FirstId { get; set; }
         Guid? SecondId { get; set; }
         GameType Type { get; set; }
-        int RoundCount { get; }
         string GameId { get; set; }
+        int RoundCount { get; }
 
         bool IsRegisteredId(Guid id);
         void SetProperties(Game game);
         Task<IRoundService> GetOpenRoundAsync();
         Task<IRoundService> AddRoundAsync(IRoundService round);
         Task<IRoundService> GetLastRoundAsync();
+        Task<string> GetResult(Guid id);
     }
 }

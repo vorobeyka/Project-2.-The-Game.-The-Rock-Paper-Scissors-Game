@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,6 +14,8 @@ namespace TheRockPaperScissors.Server.Services.Impl
     {
         private readonly IList<IRoundService> _rounds = new List<IRoundService>();
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        private readonly ConcurrentDictionary<Guid, string> _result = new ConcurrentDictionary<Guid, string>();
+
         public Guid FirstId { get; set; }
         public Guid? SecondId { get; set; }
         public GameType Type { get; set; }
@@ -86,6 +89,12 @@ namespace TheRockPaperScissors.Server.Services.Impl
             var result = _rounds.Last();
             _semaphoreSlim.Release();
             return result;
+        }
+
+        public string GetResult(Guid id)
+        {
+            return string.Join("\n________________________",
+                _rounds.Where(round => !round.IsOpen).Select(round => round.GetResult(id)));
         }
     }
 }
