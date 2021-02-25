@@ -21,6 +21,7 @@ namespace TheRockPaperScissors.Client.Menu
 
             while (command != 3)
             {
+                Console.Clear();
                 Console.WriteLine($" USER : {User.Login}");
                 MenuDesign.WriteHeader("MAIN MENU");
                 Console.WriteLine(" 1 - Play\n 2 - Set color\n 3 - Exit");
