@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
@@ -98,9 +99,11 @@ namespace TheRockPaperScissors.Server.Controllers
             var id = Guid.Parse(token);
             var game = await _seriesStorage.GetByIdAsync(id);
             var round = await game.GetLastRoundAsync();
-            var result = await round.GetResultAsync(id);
+            var user = await _users.GetAsync(id);
+            var result = await round.GetResultAsync(id, user.Statistics);
 
-            if (string.IsNullOrEmpty(result)) return NotFound(await GetSeriesResult(token));
+            //HttpStatusCode.Created
+            if (string.IsNullOrEmpty(result)) return NotFound();
             else return Ok(result);
         }
 

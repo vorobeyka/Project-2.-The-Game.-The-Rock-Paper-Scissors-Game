@@ -69,7 +69,6 @@ namespace TheRockPaperScissors.Server.Services.Impl
         public async Task<IRoundService> GetOpenRoundAsync()
         {
             await _semaphoreSlim.WaitAsync();
-            //if (_rounds.Count() == 0) _rounds.Append(new RoundService());
             var result = _rounds.FirstOrDefault(round => round.IsOpen);
             _semaphoreSlim.Release();
             return result;
@@ -93,8 +92,9 @@ namespace TheRockPaperScissors.Server.Services.Impl
 
         public string GetResult(Guid id)
         {
-            return string.Join("\n________________________",
-                _rounds.Where(round => !round.IsOpen).Select(round => round.GetResult(id)));
+            return string.Concat(_rounds
+                .Where(round => !round.IsOpen)
+                .Select(round => round.GetResult(id)));
         }
     }
 }

@@ -40,5 +40,21 @@ namespace TheRockPaperScissors.Server.Services.Impl
             _db.UpdateUser(user);
             _semaphoreSlim.Release();
         }
+
+        public async Task<string> GetPublicStatisticsAsync()
+        {
+            await _semaphoreSlim.WaitAsync();
+            var result = _db.GetPublicStatistics();
+            _semaphoreSlim.Release();
+            return result;
+        }
+
+        public async Task<string> GetUserStatisticsAsync(string login)
+        {
+            await _semaphoreSlim.WaitAsync();
+            var result = _db.GetUserStatistics(login);
+            _semaphoreSlim.Release();
+            return result;
+        }
     }
 }

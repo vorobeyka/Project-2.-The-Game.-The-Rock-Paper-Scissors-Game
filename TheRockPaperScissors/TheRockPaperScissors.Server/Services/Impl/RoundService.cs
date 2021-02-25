@@ -25,7 +25,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
             return Moves.TryAdd(id, move);
         }
 
-        public async Task<string> GetResultAsync(Guid id)
+        public async Task<string> GetResultAsync(Guid id, Statistics statistics)
         {
             await Task.Delay(100);
             var timer = 0;
@@ -37,27 +37,23 @@ namespace TheRockPaperScissors.Server.Services.Impl
             }
             if (timer == 20) return "";
 
-            if (_result.IsEmpty)
-            {
-                var secondId = Moves.First(move => move.Key != id).Key;
-                var move1 = Moves[id];
-                var move2 = Moves.First(move => move.Key != id).Value;
+            var secondId = Moves.First(move => move.Key != id).Key;
+            var move1 = Moves[id];
+            var move2 = Moves.First(move => move.Key != id).Value;
 
-                _result.GetOrAdd(secondId, GetResultString(Moves[id], Moves[secondId]));
-                return _result.GetOrAdd(id, GetResultString(Moves[id], Moves[secondId]));
-            }
-            else
-            {
-                return _result[id];
-            }
+            _result.TryAdd(id, GetResultString(Moves[id], Moves[secondId], statistics));
+            return _result[id];
         }
 
         public string GetResult(Guid id) => _result[id];
 
-        private string GetResultString(Move firstPlayerMove, Move secondPlayerMove)
+        private string GetResultString(Move firstPlayerMove, Move secondPlayerMove, Statistics statistics)
         {
             var result = $"Your move : {firstPlayerMove}\nOpponent move : {secondPlayerMove}\nResult: ";
             var gameResult = GameAlgorithm.GetRound(firstPlayerMove, secondPlayerMove);
+            statistics.UpdateMove(firstPlayerMove);
+            statistics.UpdateResult(gameResult);
+
             switch (gameResult)
             {
                 case GameResult.Win: return result += "you won";
