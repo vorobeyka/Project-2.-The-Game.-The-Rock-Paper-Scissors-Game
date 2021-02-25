@@ -17,6 +17,5 @@ namespace TheRockPaperScissors.Client.Game
         {
             Player = player;
         }
-
     }
 }

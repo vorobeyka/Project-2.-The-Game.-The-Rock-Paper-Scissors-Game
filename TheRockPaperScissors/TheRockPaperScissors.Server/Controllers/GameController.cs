@@ -45,7 +45,7 @@ namespace TheRockPaperScissors.Server.Controllers
                 storage.FirstOrDefault(s => s.SecondId == null && s.Type == game.Type && s.GameId == game.GameId));
             var foundSeries = openSeries != null;
             if (!foundSeries) openSeries = series;
-
+            
             try
             {
                 openSeries.SetProperties(game);
