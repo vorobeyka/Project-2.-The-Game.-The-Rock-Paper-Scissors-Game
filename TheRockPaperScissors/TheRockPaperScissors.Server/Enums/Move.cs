@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TheRockPaperScissors.Client.Game.Enums
+namespace TheRockPaperScissors.Server.Enums
 {
     public enum Move
     {

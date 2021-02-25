@@ -7,7 +7,7 @@ namespace TheRockPaperScissors.Server.Enums
 {
     public enum GameType
     {
-        Test,
+        Training,
         Private,
         Public
     }

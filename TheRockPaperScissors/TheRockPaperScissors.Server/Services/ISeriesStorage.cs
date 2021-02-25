@@ -11,5 +11,6 @@ namespace TheRockPaperScissors.Server.Services
         Task RemoveAsync(ISeriesService series);
         Task RemoveAsync(Func<IEnumerable<ISeriesService>, ISeriesService> factory);
         Task<ISeriesService> GetAsync(Func<IEnumerable<ISeriesService>, ISeriesService> factory);
+        Task<ISeriesService> GetByIdAsync(Guid id);
     }
 }

@@ -31,6 +31,7 @@ namespace TheRockPaperScissors.Server
             services.AddSingleton<ISeriesStorage, SeriesStorage>();
 
             services.AddTransient<ISeriesService, SeriesService>();
+            services.AddTransient<IRoundService, RoundService>();
 
             services.AddControllers();
         }
