@@ -35,34 +35,28 @@ namespace TheRockPaperScissors.Server.Services.Impl
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 timer++;
             }
+
             if (timer == 20) return "";
 
-            if (_result.IsEmpty)
-            {
-                var secondId = Moves.First(move => move.Key != id).Key;
-                var move1 = Moves[id];
-                var move2 = Moves.First(move => move.Key != id).Value;
+            var secondId = Moves.First(move => move.Key != id).Key;
+            var move1 = Moves[id];
+            var move2 = Moves.First(move => move.Key != id).Value;
+            _result.TryAdd(id, GetResultString(Moves[id], Moves[secondId]));
 
-                _result.GetOrAdd(secondId, GetResultString(Moves[id], Moves[secondId]));
-                return _result.GetOrAdd(id, GetResultString(Moves[id], Moves[secondId]));
-            }
-            else
-            {
-                return _result[id];
-            }
+            return _result[id];
         }
 
         public string GetResult(Guid id) => _result[id];
 
         private string GetResultString(Move firstPlayerMove, Move secondPlayerMove)
         {
-            var result = $"Your move : {firstPlayerMove}\nOpponent move : {secondPlayerMove}\nResult: ";
+            var result = $" You      : {firstPlayerMove}| Opponent : {secondPlayerMove}|~";
             var gameResult = GameAlgorithm.GetRound(firstPlayerMove, secondPlayerMove);
             switch (gameResult)
             {
-                case GameResult.Win: return result += "you won";
-                case GameResult.Loss: return result += "you lose";
-                default: return result += "draw";
+                case GameResult.Win: return result += "YOU WON";
+                case GameResult.Loss: return result += "YOU LOSE";
+                default: return result += "DRAW";
             }
         }
     }

@@ -17,7 +17,7 @@ namespace TheRockPaperScissors.Client.Menu
         {
             Console.ForegroundColor = color;
             Console.Clear();
-            _menuDesign.WriteHeader("SELECT MODE");
+            _menuDesign.WriteHeader("select mode");
 
             var number = 1;
 
@@ -27,8 +27,8 @@ namespace TheRockPaperScissors.Client.Menu
                 number++;
             }
 
-            Console.WriteLine($" {number} - Exit");
-            var command = _menuValidation.CheckInteger(" Enter number ", number);
+            Console.WriteLine($" {number} - Go back");
+            var command = _menuValidation.CheckInteger(" Enter number >> ", number);
             try
             {
                 string roomId = null;
@@ -39,29 +39,45 @@ namespace TheRockPaperScissors.Client.Menu
                         break;
                     case 2:
                         Console.Clear();
-                        _menuDesign.WriteHeader("PRIVATE MODE");
-                        var privateCommand = _menuValidation.CheckInteger(" 1 - Create room\n 2 - Connect to room", 2);
+                        _menuDesign.WriteHeader("private mode");
+                        Console.WriteLine(" 1 - Create room\n 2 - Connect to room");
+                        var privateCommand = _menuValidation.CheckInteger(" Enter command >> ", 2);
                         switch (privateCommand)
                         {
                             case 1:
                                 roomId = await _gameConnectService.CreateGame(user.Id, GameType.Private);
-                                Console.WriteLine($" Room identifier : {roomId}");
+                                Console.WriteLine($" Room identifier : {roomId.Replace("\"", "")}");
                                 break;
                             case 2:
-                                roomId = _menuValidation.InputString(" Enter room identifier :");
+                                roomId = _menuValidation.InputString(" Enter room identifier :", 4);
                                 await _gameConnectService.ConnectToPrivate(user.Id, GameType.Private, roomId);
                                 break;
                         }
                         break;
                     case 3:
+                        _menuDesign.WriteHeader("public mode");
                         await _gameConnectService.CreateGame(user.Id, GameType.Public);
                         break;
                     case 4:
                         Console.Clear();
-                        break;
+                        return;
                 }
+                Console.WriteLine(" Waiting for another player...");
                 await _gameService.StartGame(user.Id);
-                await MakeMove(user.Id, roomId);
+
+                string message = "";
+                while (message != "Over" || message != "Left")
+                {
+                    await MakeMove(user.Id, roomId);
+                    message = await GetResult(user.Id);
+                    _menuDesign.WriteHeader("result");
+                    string[] messages = message.Replace("\"", "").Replace("|", "\n").Split('~');
+                    Console.Write(messages[0]);
+                    _menuDesign.WriteInColor(" " + messages[1], ConsoleColor.Cyan);
+                    Console.WriteLine("\n Press ENTER for next round >> ");
+                    Console.ReadKey();
+                }
+                Console.ReadKey();
             }
             catch (Exception ex)
             {
@@ -69,20 +85,25 @@ namespace TheRockPaperScissors.Client.Menu
             }
         }
 
-        public async Task<string> MakeMove(Guid token, string roomId)
+        public async Task MakeMove(Guid token, string roomId)
         {
-            _menuDesign.WriteHeader("THE GAME");
-            if (roomId != null) Console.WriteLine($" Room {roomId}\n");
+            Console.Clear();
+            _menuDesign.WriteHeader("the game");
+            if (roomId != null) Console.WriteLine($" Room {roomId.Replace("\"", "")}\n");
             var number = 1;
-            Console.WriteLine($" You have 20 seconds to make a move. ");
+            Console.WriteLine($" You have only 20 seconds... ");
 
             foreach (Move m in Enum.GetValues(typeof(Move)))
             {
                 Console.WriteLine($" {number} - {Enum.GetNames(typeof(Move))[number - 1]}");
                 number++;
             }
-            var move = _menuValidation.CheckInteger(" Make a move : ", number - 1) - 1;
+            var move = _menuValidation.CheckInteger(" Make a move >> ", number - 1) - 1;
             await _gameService.StartRound(token, (Move)move);
+        }
+
+        public async Task<string> GetResult(Guid token)
+        {
             var result = await _gameService.GetRoundResult(token);
             if (result == "Left")
                 return await ShowSessionResult(token, "Your opponent left.");
@@ -93,7 +114,7 @@ namespace TheRockPaperScissors.Client.Menu
 
         public async Task<string> ShowSessionResult(Guid token, string status)
         {
-            _menuDesign.WriteHeader("RESULT");
+            _menuDesign.WriteHeader("final result");
             return await _gameService.GetSeriesResult(token);
         }
     }
