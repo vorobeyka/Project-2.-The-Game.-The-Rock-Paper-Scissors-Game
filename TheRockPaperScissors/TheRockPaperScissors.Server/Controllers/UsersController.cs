@@ -8,6 +8,7 @@ using TheRockPaperScissors.Server.Services;
 using TheRockPaperScissors.Server.Models;
 using System.Net.Mime;
 using TheRockPaperScissors.Server.Services.Impl;
+using System.Linq;
 
 namespace TheRockPaperScissors.Server.Controllers
 {
@@ -17,11 +18,11 @@ namespace TheRockPaperScissors.Server.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IStorage<Guid, User> _authorizedUsers;
+        private readonly IUsersStorage _authorizedUsers;
         private readonly ILogger<UsersController> _logger;
 
         public UsersController(IUserService userService,
-                               IStorage<Guid, User> authorizedUsers,
+                               IUsersStorage authorizedUsers,
                                ILogger<UsersController> logger)
         {
             _authorizedUsers = authorizedUsers ?? throw new ArgumentNullException(nameof(authorizedUsers));
@@ -33,6 +34,7 @@ namespace TheRockPaperScissors.Server.Controllers
         public async Task<ActionResult<Guid>> Login([FromBody]User user)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (await _authorizedUsers.ContainValueAsync(user)) return BadRequest("User are authorized");
 
             var token = await _userService.LoginUserAsync(user.Login, user.Password);
 
