@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TheRockPaperScissors.Client.Services
 {
-    public interface IGameTypeService
+    public interface IGameConnectService
     {
 
     }

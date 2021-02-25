@@ -5,16 +5,16 @@ namespace TheRockPaperScissors.Client.Models
 {
     public class GameTypeObject
     {
-        public Guid Id { get; set; }
+        public string UserId { get; set; }
 
-        public GameType GameType { get; set; }
+        public GameType Type { get; set; }
 
         public string GameId { get; set; }
 
-        public GameTypeObject(Guid id, GameType gameType, string gameId)
+        public GameTypeObject(string id, GameType gameType, string gameId)
         {
-            Id = id;
-            GameType = gameType;
+            UserId = id;
+            Type = gameType;
             GameId = gameId;
         }
     }
