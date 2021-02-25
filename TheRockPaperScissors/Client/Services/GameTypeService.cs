@@ -17,7 +17,7 @@ namespace TheRockPaperScissors.Client.Services
         {
             var type = Enum.GetName(typeof(GameType), gameType);
             var json = _gameTypeSerialization.Serialize(new GameTypeObject(token, gameType, null));
-            var response = await _httpClient.PostAsync($"/game/{type}/{token}",
+            var response = await _httpClient.PostAsync($"/game",
                            new StringContent(json, Encoding.UTF8, "application/json"));
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine(content);
