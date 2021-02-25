@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Models
 {
@@ -13,6 +9,5 @@ namespace TheRockPaperScissors.Client.Models
         string Login { get; set; }
 
         string Password { get; set; }
-        
     }
 }

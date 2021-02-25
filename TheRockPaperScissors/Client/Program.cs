@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TheRockPaperScissors.Client.Menu;
+using TheRockPaperScissors.Client.Services;
 
 namespace TheRockPaperScissors.Client
 {
