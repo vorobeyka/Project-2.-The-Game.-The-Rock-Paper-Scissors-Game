@@ -52,6 +52,8 @@ namespace TheRockPaperScissors.Server.Services.Impl
             }
         }
 
+        public string GetResult(Guid id) => _result[id];
+
         private string GetResultString(Move firstPlayerMove, Move secondPlayerMove)
         {
             var result = $"Your move : {firstPlayerMove}\nOpponent move : {secondPlayerMove}\nResult: ";

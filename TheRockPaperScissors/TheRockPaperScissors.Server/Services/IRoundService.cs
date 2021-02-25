@@ -14,5 +14,6 @@ namespace TheRockPaperScissors.Server.Services
 
         bool AddMove(Guid id, Move move);
         Task<string> GetResultAsync(Guid id);
+        string GetResult(Guid id);
     }
 }

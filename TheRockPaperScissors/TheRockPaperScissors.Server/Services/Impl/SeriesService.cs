@@ -91,12 +91,10 @@ namespace TheRockPaperScissors.Server.Services.Impl
             return result;
         }
 
-        public async Task<string> GetResult(Guid id)
+        public string GetResult(Guid id)
         {
-            await _semaphoreSlim.WaitAsync();
-
-            _semaphoreSlim.Release();
-            return "";
+            return string.Join("\n________________________",
+                _rounds.Where(round => !round.IsOpen).Select(round => round.GetResult(id)));
         }
     }
 }

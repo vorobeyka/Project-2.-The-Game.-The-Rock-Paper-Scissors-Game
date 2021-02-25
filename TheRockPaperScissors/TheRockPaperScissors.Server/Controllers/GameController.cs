@@ -64,11 +64,11 @@ namespace TheRockPaperScissors.Server.Controllers
         {
             await Task.Delay(500);
             var id = Guid.Parse(token);
-            var game = await _seriesStorage.GetAsync(storage =>
+            var series = await _seriesStorage.GetAsync(storage =>
                 storage.FirstOrDefault(series => series.IsRegisteredId(id)));
 
             var time = 0;
-            while (game.SecondId == null && time < 300)
+            while (series.SecondId == null && time < 300)
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 time++;
@@ -84,8 +84,8 @@ namespace TheRockPaperScissors.Server.Controllers
         {
             await Task.Delay(500);
             var id = Guid.Parse(round.Id);
-            var game = await _seriesStorage.GetByIdAsync(id);
-            var openRound = await game.GetOpenRoundAsync() ?? await game.AddRoundAsync(roundService);
+            var series = await _seriesStorage.GetByIdAsync(id);
+            var openRound = await series.GetOpenRoundAsync() ?? await series.AddRoundAsync(roundService);
 
             if (!openRound.AddMove(id, round.Move)) return BadRequest("Can't add round(");
             return Ok();
@@ -100,15 +100,17 @@ namespace TheRockPaperScissors.Server.Controllers
             var round = await game.GetLastRoundAsync();
             var result = await round.GetResultAsync(id);
 
-            if (string.IsNullOrEmpty(result)) return await GetSeriesResult();
+            if (string.IsNullOrEmpty(result)) return NotFound(await GetSeriesResult(token));
             else return Ok(result);
         }
 
-        [HttpGet("seriesResult")]
-        public async Task<ActionResult> GetSeriesResult()
+        [HttpGet("seriesResult/{token}")]
+        public async Task<ActionResult> GetSeriesResult([FromRoute(Name = "token")] string token)
         {
             await Task.Delay(500);
-            return Ok("Series result");
+            var id = Guid.Parse(token);
+            var series = await _seriesStorage.GetByIdAsync(id);
+            return Ok(series.GetResult(id));
         }
     }
 }
