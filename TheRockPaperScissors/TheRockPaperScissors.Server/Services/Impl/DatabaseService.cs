@@ -12,6 +12,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
     {
         private readonly Database _db = new Database();
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         public async Task<User> GetUserAsync(string login)
         {
             await _semaphoreSlim.WaitAsync();
