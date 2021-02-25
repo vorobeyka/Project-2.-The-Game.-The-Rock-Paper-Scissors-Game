@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TheRockPaperScissors.Server.Enums;
+using TheRockPaperScissors.Server.Exceptions;
 using TheRockPaperScissors.Server.Models;
 using TheRockPaperScissors.Server.Services;
 
@@ -36,26 +37,25 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromBody] Game game)
         {
             await Task.Delay(500);
-            _logger.LogInformation(game.UserId);
             var userId = Guid.Parse(game.UserId);
 
             if (!await _users.ContainAsync(userId)) return NotFound($"Not found user with token {userId}");
 
             var openSeries = await _seriesStorage.GetAsync(storage =>
-                storage.FirstOrDefault(s => s.SecondId == null && s.Type == game.Type && s.GameId == game.GameId))
-                ?? series;
+                storage.FirstOrDefault(s => s.SecondId == null && s.Type == game.Type && s.GameId == game.GameId));
+            var foundSeries = openSeries != null;
+            if (!foundSeries) openSeries = series;
 
-            openSeries.Type = game.Type;
             try
             {
-                openSeries.SetProperties(userId, game.GameId);
+                openSeries.SetProperties(game);
             }
-            catch (Exception)
+            catch (SeriesException)
             {
-                return BadRequest("Invalid private id or room is full");
+                return BadRequest("Invalid game id or game have maximum users");
             }
 
-            await _seriesStorage.AddAsync(openSeries);
+            if (!foundSeries) await _seriesStorage.AddAsync(openSeries);
             return Ok(openSeries.GameId);
         }
 
@@ -84,12 +84,9 @@ namespace TheRockPaperScissors.Server.Controllers
         {
             await Task.Delay(500);
             var id = Guid.Parse(round.Id);
-            var game = await _seriesStorage.GetAsync(storage => storage.FirstOrDefault(series => series.IsRegisteredId(id)));
-            var openRound = game.RoundCount == 0
-                ? await game.AddRoundAsync(roundService)
-                : await game.GetOpenRoundAsync();
+            var game = await _seriesStorage.GetByIdAsync(id);
+            var openRound = await game.GetOpenRoundAsync() ?? await game.AddRoundAsync(roundService);
 
-            _logger.LogInformation(game.RoundCount.ToString());
             if (!openRound.AddMove(id, round.Move)) return BadRequest("Can't add round(");
             return Ok();
         }
@@ -99,17 +96,12 @@ namespace TheRockPaperScissors.Server.Controllers
         {
             await Task.Delay(500);
             var id = Guid.Parse(token);
-            var game = await _seriesStorage.GetAsync(storage =>storage.FirstOrDefault(series => series.IsRegisteredId(id)));
+            var game = await _seriesStorage.GetByIdAsync(id);
             var round = await game.GetLastRoundAsync();
             var result = await round.GetResultAsync(id);
 
-            var otherId = id == game.FirstId ? game.SecondId : game.FirstId;
-            var str = result;
-            str += await round.GetResultAsync((Guid)otherId);
-
-
             if (string.IsNullOrEmpty(result)) return await GetSeriesResult();
-            else return Ok(str);
+            else return Ok(result);
         }
 
         [HttpGet("seriesResult")]
@@ -118,83 +110,5 @@ namespace TheRockPaperScissors.Server.Controllers
             await Task.Delay(500);
             return Ok("Series result");
         }
-
-        /*[HttpPost("test/{token}")]
-        public async Task<ActionResult> Test(
-            [FromServices]ISeriesService series,
-            [FromRoute(Name = "token")] string token)
-        {
-            await Task.Delay(500);
-            var guid = Guid.Parse(token);
-
-            if (await _users.ContainAsync(guid)) return NotFound($"Not found user with token {guid}");
-
-            series.Type = GameType.Test;
-            series.FirstId = guid;
-            await _seriesStorage.AddAsync(series);
-            return Ok(token);
-        }
-
-        [HttpPost("private/{token}")]
-        public async Task<ActionResult> PrivateCreate(
-            [FromServices]ISeriesService series,
-            [FromRoute(Name = "token")] string token)
-        {
-            await Task.Delay(500);
-            var guid = Guid.Parse(token);
-
-            if (!await _users.ContainAsync(guid)) return NotFound($"Not found user with token {guid}");
-
-            var gameId = new Random().Next(1000, 9999).ToString();
-            series.Type = GameType.Private;
-            series.FirstId = guid;
-            series.GameId = gameId;
-            await _seriesStorage.AddAsync(series);
-            return Ok(gameId);
-        }
-
-        [HttpPost("private/{token}/{id}")]
-        public async Task<ActionResult> PrivateConnect(
-            [FromRoute(Name = "token")] string token,
-            [FromRoute(Name = "id")] string id)
-        {
-            await Task.Delay(500);
-            var guid = Guid.Parse(token);
-
-            if (!await _users.ContainAsync(guid)) return NotFound($"Not found user with token {guid}");
-
-            var series = await _seriesStorage.GetAsync(storage =>
-                storage.FirstOrDefault(s => s.GameId == id));
-
-            if (series == null) return NotFound("Not found series");
-            series.SecondId = Guid.Parse(token);
-            return Ok();
-        }
-
-        [HttpPost("public/{token}")]
-        public async Task<ActionResult> Public(
-            [FromServices] ISeriesService series,
-            [FromRoute(Name = "token")] string token)
-        {
-            await Task.Delay(500);
-            var guid = Guid.Parse(token);
-
-            if (!await _users.ContainAsync(guid)) return NotFound($"Not found user with token {guid}");
-
-            var openSeries = await _seriesStorage.GetAsync(storage =>
-                storage.FirstOrDefault(s => s.SecondId == null));
-
-            if (openSeries != null)
-            {
-                openSeries.SecondId = guid;
-            }
-            else
-            {
-                series.FirstId = guid;
-                series.Type = GameType.Public;
-                await _seriesStorage.AddAsync(series);
-            }
-            return Ok();
-        }*/
     }
 }

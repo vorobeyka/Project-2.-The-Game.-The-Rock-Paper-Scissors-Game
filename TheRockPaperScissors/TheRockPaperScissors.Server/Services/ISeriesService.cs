@@ -16,7 +16,7 @@ namespace TheRockPaperScissors.Server.Services
         string GameId { get; set; }
 
         bool IsRegisteredId(Guid id);
-        void SetProperties(Guid id, string gameId);
+        void SetProperties(Game game);
         Task<IRoundService> GetOpenRoundAsync();
         Task<IRoundService> AddRoundAsync(IRoundService round);
         Task<IRoundService> GetLastRoundAsync();

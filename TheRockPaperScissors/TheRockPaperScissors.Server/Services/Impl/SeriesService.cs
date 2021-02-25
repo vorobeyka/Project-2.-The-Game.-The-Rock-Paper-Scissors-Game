@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheRockPaperScissors.Server.Enums;
+using TheRockPaperScissors.Server.Exceptions;
 using TheRockPaperScissors.Server.Models;
 
 namespace TheRockPaperScissors.Server.Services.Impl
@@ -22,12 +23,16 @@ namespace TheRockPaperScissors.Server.Services.Impl
         {
             return id == FirstId || id == SecondId;
         }
-        public void SetProperties(Guid id, string gameId)
+
+        public void SetProperties(Game game)
         {
+            var id = Guid.Parse(game.UserId);
+            Type = game.Type;
+
             switch (Type)
             {
                 case GameType.Training: SetTraining(id); break;
-                case GameType.Private: SetPrivate(id, gameId); break;
+                case GameType.Private: SetPrivate(id, game.GameId); break;
                 case GameType.Public: SetPublic(id); break;
             }
         }
@@ -47,7 +52,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
             }
             else
             {
-                if (gameId != GameId) throw new Exception(nameof(gameId));
+                if (gameId != GameId) throw new SeriesException();
                 SecondId = id;
             }
         }
