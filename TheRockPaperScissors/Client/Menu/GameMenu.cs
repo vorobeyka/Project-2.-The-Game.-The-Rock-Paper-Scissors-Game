@@ -2,50 +2,59 @@
 using TheRockPaperScissors.Client.Game.Enums;
 using TheRockPaperScissors.Client.Game;
 using TheRockPaperScissors.Client.Models;
+using TheRockPaperScissors.Client.Services;
+using System.Threading.Tasks;
 
 namespace TheRockPaperScissors.Client.Menu
 {
     public class GameMenu
     {
-        private readonly MenuDesign MenuDesign = new MenuDesign();
-        private readonly MenuValidation MenuValidation = new MenuValidation();
-        private readonly GameModes GameModes = new GameModes();
+        private readonly MenuDesign _menuDesign = new MenuDesign();
+        private readonly MenuValidation _menuValidation = new MenuValidation();
+        //private readonly GameModes _gameModes = new GameModes();
+        private readonly GameTypeService _gameTypeService = new GameTypeService();
 
-        //public ConsoleColor Color { get; set; }
-
-        /*public GameMenu(ConsoleColor color)
+        public async Task Load(ConsoleColor color, User user)
         {
-            Color = color;
-        }*/
-
-        public void Load(ConsoleColor color, User user)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.ForegroundColor = color;
             Console.Clear();
-            MenuDesign.WriteHeader("SELECT MODE");
+            _menuDesign.WriteHeader("SELECT MODE");
+
             int number = 1;
+
             foreach (GameType type in Enum.GetValues(typeof(GameType)))
             {
                 Console.WriteLine($" {number} - {Enum.GetNames(typeof(GameType))[number-1]}");
                 number++;
             }
-            int command = MenuValidation.CheckInteger(" Enter number ", number);
+
+            Console.WriteLine($" {number} - Exit");
+            int command = _menuValidation.CheckInteger(" Enter number ", number);
+            GameResult result = new GameResult();
+
             switch (command)
             {
                 case 1:
-                    GameModes.PlayInTrainingMode(user.Id);
+                    result = await Play(user.Id, GameType.Training);
                     break;
-                    //throw new NotImplementedException();
                 case 2:
-                    //GameModes.PlayInPrivateMode();
-                    //Console.Clear();
+                    result = await Play(user.Id, GameType.Private);
                     throw new NotImplementedException();
                 case 3:
-                    //GameModes.PlayInPublicMode();
-                    //Console.Clear();
+                    result = await Play(user.Id, GameType.Public);
                     throw new NotImplementedException();
+                case 4:
+                    Console.Clear();
+                    break;
             }
+            Console.WriteLine(result.Result);
+        }
+
+        public async Task<GameResult> Play(Guid player, GameType gametype)
+        {
+            Console.Clear();
+            await _gameTypeService.SelectGameType(player, gametype);
+            throw new NotImplementedException();
         }
     }
 }

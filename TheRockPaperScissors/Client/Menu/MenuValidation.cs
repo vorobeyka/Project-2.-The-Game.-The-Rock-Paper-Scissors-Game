@@ -8,11 +8,13 @@ namespace TheRockPaperScissors.Client.Menu
         {
             Console.WriteLine(message);
             string input = Console.ReadLine();
+
             while (input.Trim().Length < 1)
             {
                 Console.WriteLine("Invalid input. " + message);
                 input = Console.ReadLine();
             }
+
             return input;
         }
 
@@ -20,9 +22,10 @@ namespace TheRockPaperScissors.Client.Menu
         {
             Console.WriteLine(message);
             int command;
-            while (!int.TryParse(Console.ReadLine().Trim(), out command)
-                || command < 1 || command > limit)
+
+            while (!int.TryParse(Console.ReadLine().Trim(), out command) || command < 1 || command > limit)
                 Console.WriteLine("Invalid input. " + message);
+
             return command;
         }
     }

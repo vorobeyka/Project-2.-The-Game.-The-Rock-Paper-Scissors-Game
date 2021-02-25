@@ -17,19 +17,19 @@ namespace TheRockPaperScissors.Client.Menu
             Console.ForegroundColor = color;
             MenuDesign.WriteInColor("\n THE ROCK PAPER SCISSORS \n", ConsoleColor.Cyan);
             User = await AuthorizationMenu.Load(ConsoleColor.Yellow);
-            int menuCommand = 0;
+            int command = 0;
 
-            while (menuCommand != 3)
+            while (command != 3)
             {
                 Console.WriteLine($" USER : {User.Login}");
                 MenuDesign.WriteHeader("MAIN MENU");
                 Console.WriteLine(" 1 - Play\n 2 - Set color\n 3 - Exit");
-                menuCommand = MenuValidation.CheckInteger(" Enter number ", 3);
+                command = MenuValidation.CheckInteger(" Enter number ", 3);
 
-                switch (menuCommand)
+                switch (command)
                 {
                     case 1:
-                        GameMenu.Load(MenuDesign.Color, User);
+                        await GameMenu.Load(MenuDesign.Color, User);
                         break;
                     case 2:
                         MenuDesign.SetConsoleColor();

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TheRockPaperScissors.Client.Menu
 {
@@ -24,6 +22,7 @@ namespace TheRockPaperScissors.Client.Menu
             {
                 if (color == ConsoleColor.Black)
                     continue;
+
                 WriteInColor($" {number} - {Enum.GetNames(typeof(ConsoleColor))[number]}", color);
                 number++;
             }
@@ -41,15 +40,12 @@ namespace TheRockPaperScissors.Client.Menu
             ConsoleColor color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Cyan;
             string decoration = " ";
+
             for (int i = 0; i < text.Length; i++)
                 decoration += "-";
+
             Console.WriteLine($"\n {text}\n{decoration}");
             Console.ForegroundColor = color;
-        }
-
-        public ConsoleColor GetCurrentColor()
-        {
-            return Color;
         }
     }
 }

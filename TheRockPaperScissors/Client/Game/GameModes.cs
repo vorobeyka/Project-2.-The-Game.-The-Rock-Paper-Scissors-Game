@@ -1,32 +1,18 @@
 ﻿using System;
 using TheRockPaperScissors.Client.Menu;
-using System.Collections.Generic;
+using TheRockPaperScissors.Client.Services;
+using System.Threading.Tasks;
+using TheRockPaperScissors.Client.Game.Enums;
 using System.Text;
 
 namespace TheRockPaperScissors.Client.Game
 {
     public class GameModes
     {
-        private readonly MenuDesign MenuDesign = new MenuDesign();
+        private readonly MenuDesign _menuDesign = new MenuDesign();
 
-        public GameResult PlayInTrainingMode(Guid player)
+        public Task<GameResult> Play(Guid player, GameType gametype)
         {
-            MenuDesign.WriteHeader("TRAINING MODE");
-            Game game = new Game(player);
-            throw new NotImplementedException();
-        }
-
-        public GameResult PlayInPrivateMode(Guid player)
-        {
-            MenuDesign.WriteHeader("PRIVATE MODE");
-            Game game = new Game(player);
-            throw new NotImplementedException();
-        }
-
-        public GameResult PlayInPublicMode(Guid player)
-        {
-            MenuDesign.WriteHeader("PUBLIC MODE");
-            Game game = new Game(player);
             throw new NotImplementedException();
         }
     }
