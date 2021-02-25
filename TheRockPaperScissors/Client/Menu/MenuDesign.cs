@@ -5,6 +5,7 @@ namespace TheRockPaperScissors.Client.Menu
     public class MenuDesign
     {
         public static ConsoleColor Color = ConsoleColor.Yellow;
+        private readonly MenuValidation _menuValidation = new MenuValidation();
 
         public void WriteInColor(string text, ConsoleColor consoleColor)
         {
@@ -28,8 +29,7 @@ namespace TheRockPaperScissors.Client.Menu
             }
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(" Choose color");
-            int.TryParse(Console.ReadLine(), out var num);
+            var num = _menuValidation.CheckInteger(" Choose color >> ", number - 1);
             Color = (ConsoleColor)Enum.GetValues(typeof(ConsoleColor)).GetValue(num);
             Console.ForegroundColor = Color;
             Console.Clear();
@@ -44,7 +44,7 @@ namespace TheRockPaperScissors.Client.Menu
             for (int i = 0; i < text.Length; i++)
                 decoration += "-";
 
-            Console.WriteLine($"\n {text}\n{decoration}");
+            Console.WriteLine($"\n {text.ToUpper()}\n{decoration}");
             Console.ForegroundColor = color;
         }
     }

@@ -21,6 +21,6 @@ namespace TheRockPaperScissors.Server.Services
         Task<IRoundService> GetOpenRoundAsync();
         Task<IRoundService> AddRoundAsync(IRoundService round);
         Task<IRoundService> GetLastRoundAsync();
-        Task<string> GetResult(Guid id);
+        string GetResult(Guid id);
     }
 }
