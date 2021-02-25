@@ -2,7 +2,7 @@
 {
     public enum GameType
     {
-        Training,
+        Test,
         Private,
         Public
     }

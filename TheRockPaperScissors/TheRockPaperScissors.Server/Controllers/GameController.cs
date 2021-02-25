@@ -38,7 +38,7 @@ namespace TheRockPaperScissors.Server.Controllers
             await Task.Delay(500);
             var guid = Guid.Parse(token);
 
-            if (await _users.ContainAsync(guid)) return NotFound($"Not found user with token {guid}");
+            if (!await _users.ContainAsync(guid)) return NotFound($"Not found user with token {guid}");
 
             series.Type = GameType.Test;
             series.FirstId = guid;
