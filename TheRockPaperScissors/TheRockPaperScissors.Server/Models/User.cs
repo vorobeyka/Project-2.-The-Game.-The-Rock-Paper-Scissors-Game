@@ -8,6 +8,8 @@ namespace TheRockPaperScissors.Server.Models
 {
     public class User
     {
+        public Statistics Statistics { get; set; }
+
         [Required]
         [StringLength(64, MinimumLength = 3)]
         public string Login { get; set; }

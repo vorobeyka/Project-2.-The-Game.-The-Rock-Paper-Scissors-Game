@@ -8,13 +8,32 @@ namespace TheRockPaperScissors.Server.Models
 {
     public class Statistics
     {
-        public IList<GameResult> Results { get; }
-        public IList<Move> Moves { get; }
+        public int Wins { get; set; }
+        public int Loses { get; set; }
+        public int Draws { get; set; }
+        public int Rock { get; set; }
+        public int Paper { get; set; }
+        public int Scissors { get; set; }
+        public string Time { get; set; }
 
-        public Statistics()
+        public void UpdateMove(Move move)
         {
-            Results = new List<GameResult>();
-            Moves = new List<Move>();
+            switch (move)
+            {
+                case Move.Rock: Rock++; break;
+                case Move.Paper: Paper++; break;
+                case Move.Scissors: Scissors++; break;
+            }
+        }
+
+        public void UpdateResult(GameResult result)
+        {
+            switch (result)
+            {
+                case GameResult.Win: Wins++; break;
+                case GameResult.Draw: Draws++; break;
+                case GameResult.Loss: Loses++; break;
+            }
         }
     }
 }
