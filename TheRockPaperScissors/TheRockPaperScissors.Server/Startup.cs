@@ -26,7 +26,7 @@ namespace TheRockPaperScissors.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(typeof(IStorage<,>), typeof(Storage<,>));
+            services.AddSingleton<IUsersStorage, UsersStorage>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISeriesStorage, SeriesStorage>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
