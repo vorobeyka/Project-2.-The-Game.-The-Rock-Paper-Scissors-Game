@@ -26,13 +26,6 @@ namespace TheRockPaperScissors.Server.Services.Impl
             _semaphoreSlim.Release();
         }
 
-        public async Task RemoveAsync(Func<IEnumerable<ISeriesService>, ISeriesService> factory)
-        {
-            await _semaphoreSlim.WaitAsync();
-            _seriesStorage.Remove(factory.Invoke(_seriesStorage));
-            _semaphoreSlim.Release();
-        }
-
         public async Task<ISeriesService> GetAsync(Func<IEnumerable<ISeriesService>, ISeriesService> factory)
         {
             await _semaphoreSlim.WaitAsync();

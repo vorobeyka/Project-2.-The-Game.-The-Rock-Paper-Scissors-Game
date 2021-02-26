@@ -34,6 +34,7 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromBody] Game game)
         {
             var userId = Guid.Parse(game.UserId);
+            _logger.LogInformation($"Connected to game user with id {userId}");
             if (!await _users.ContainAsync(userId)) return NotFound($"Not found user with token {userId}");
 
             var openSeries = await _seriesStorage.GetAsync(storage =>
@@ -47,6 +48,7 @@ namespace TheRockPaperScissors.Server.Controllers
             }
             catch (SeriesException)
             {
+                _logger.LogInformation($"User with id {userId} can't connect to game");
                 return BadRequest("Invalid game id or game have maximum users");
             }
 
@@ -57,6 +59,7 @@ namespace TheRockPaperScissors.Server.Controllers
         [HttpGet("start/{token}")]
         public async Task<ActionResult> Start([FromRoute(Name = "token")] string token)
         {
+            _logger.LogInformation($"User with id {token} start's series");
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetAsync(storage =>
                 storage.FirstOrDefault(series => series.IsRegisteredId(id)));
@@ -68,6 +71,7 @@ namespace TheRockPaperScissors.Server.Controllers
                 time++;
             }
             if (time == 300) return NotFound("Time is out! No one connected to you");
+            _logger.LogInformation($"Start {series.Type} series");
             return Ok(true);
         }
 
@@ -77,6 +81,7 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromServices] IRoundService roundService)
         {
             var id = Guid.Parse(round.Id);
+            _logger.LogInformation($"User with id {id} connected to round");
             var series = await _seriesStorage.GetByIdAsync(id);
             var openRound = await series.GetOpenRoundAsync() ?? await series.AddRoundAsync(roundService);
 
@@ -88,6 +93,7 @@ namespace TheRockPaperScissors.Server.Controllers
         public async Task<ActionResult<string>> GetRoundResult([FromRoute(Name = "token")] string token)
         {
             var id = Guid.Parse(token);
+            _logger.LogInformation($"User with id {id} gets the result of round");
             var game = await _seriesStorage.GetByIdAsync(id);
             var round = await game.GetLastRoundAsync();
             var user = await _users.GetAsync(id);
@@ -109,6 +115,7 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromServices] IDatabaseService databaseService)
         {
             var id = Guid.Parse(token);
+            _logger.LogInformation($"User with id {token} gets the result of series");
             var series = await _seriesStorage.GetByIdAsync(id);
             var user = await _users.GetAsync(id);
             var result = series.GetResult(id);

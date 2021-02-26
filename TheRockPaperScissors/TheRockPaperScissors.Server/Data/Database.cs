@@ -17,7 +17,6 @@ namespace TheRockPaperScissors.Server.Data
         {
             if (!File.Exists(_dbName))
             {
-                Console.WriteLine("Initializing DB");
                 SQLiteConnection.CreateFile(_dbName);
             }
             CreateTable();
@@ -86,7 +85,6 @@ namespace TheRockPaperScissors.Server.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 return users;
             }
             table.AsEnumerable().ToList().ForEach(row =>

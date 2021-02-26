@@ -10,7 +10,6 @@ namespace TheRockPaperScissors.Server.Services
     public interface IDatabaseService
     {
         IList<User> GetAllUsers();
-        //Task<User> GetUserAsync(string login);
         Task<string> GetPublicStatisticsAsync();
         Task<string> GetUserStatisticsAsync(string login);
         Task AddUserAsync(User user);
