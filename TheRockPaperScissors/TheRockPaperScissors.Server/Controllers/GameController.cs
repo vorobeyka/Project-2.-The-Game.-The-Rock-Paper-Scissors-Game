@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TheRockPaperScissors.Server.Enums;
 using TheRockPaperScissors.Server.Exceptions;
 using TheRockPaperScissors.Server.Models;
 using TheRockPaperScissors.Server.Services;
@@ -16,12 +17,15 @@ namespace TheRockPaperScissors.Server.Controllers
         private readonly ILogger<GameController> _logger;
         private readonly ISeriesStorage _seriesStorage;
         private readonly IUsersStorage _users;
+        private readonly ITimeStorage _timeStorage;
 
         public GameController(
             ISeriesStorage seriesStorage,
             IUsersStorage users,
+            ITimeStorage timeStorage,
             ILogger<GameController> logger)
         {
+            _timeStorage = timeStorage;
             _seriesStorage = seriesStorage;
             _users = users;
             _logger = logger;
@@ -80,7 +84,7 @@ namespace TheRockPaperScissors.Server.Controllers
             var series = await _seriesStorage.GetByIdAsync(id);
             var openRound = await series.GetOpenRoundAsync() ?? await series.AddRoundAsync(roundService);
 
-            if (!openRound.AddMove(id, round.Move)) return BadRequest("Can't add round(");
+            if (!openRound.AddMove(id, round.Move)) return BadRequest("Can't add move");
             return Ok();
         }
 
@@ -91,7 +95,7 @@ namespace TheRockPaperScissors.Server.Controllers
             var game = await _seriesStorage.GetByIdAsync(id);
             var round = await game.GetLastRoundAsync();
             var user = await _users.GetAsync(id);
-            var result = await round.GetResultAsync(id, user.Statistics);
+            var result = await round.GetResultAsync(id, user.Statistics, game.Type);
 
             if (game.Timer.IsOutTime() || round.Timer.IsOutTime()) return NotFound();
             if (string.IsNullOrEmpty(result)) return NotFound();
@@ -108,8 +112,11 @@ namespace TheRockPaperScissors.Server.Controllers
             var user = await _users.GetAsync(id);
             var result = series.GetResult(id);
 
-            user.Statistics.UpdateTime(series.Timer.GetTime());
-            await databaseService.UpdateUserAsync(user);
+            if (series.Type != GameType.Training)
+            {
+                user.Statistics.UpdateTime(series.Timer.GetTime());
+                await databaseService.UpdateUserAsync(user);
+            }
 
             if (id == series.FirstId) series.FirstId = null;
             else series.SecondId = null;
