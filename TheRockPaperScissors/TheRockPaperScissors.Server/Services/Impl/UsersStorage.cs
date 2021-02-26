@@ -20,18 +20,6 @@ namespace TheRockPaperScissors.Server.Services.Impl
             await Task.CompletedTask;
         }
 
-        public async Task<bool> DeleteAsync(Guid key)
-        {
-            await _semaphoreSlim.WaitAsync();
-            bool isOk = _storage.ContainsKey(key);
-
-            if (isOk) isOk = _storage.Remove(key);
-            else isOk = false;
-
-            _semaphoreSlim.Release();
-            return isOk;
-        }
-
         public async Task<User> GetAsync(Guid key)
         {
             await _semaphoreSlim.WaitAsync();

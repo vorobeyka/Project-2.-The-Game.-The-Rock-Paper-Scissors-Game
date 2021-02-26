@@ -10,7 +10,6 @@ namespace TheRockPaperScissors.Server.Services
     {
         Task<User> GetAsync(Guid key);
         Task AddAsync(Guid key, User item);
-        Task<bool> DeleteAsync(Guid key);
         Task<bool> ContainAsync(Guid key);
         Task<bool> ContainValueAsync(User item);
     }
