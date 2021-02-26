@@ -9,7 +9,7 @@ namespace TheRockPaperScissors.Client.Menu
             Console.Write(message);
             string input = Console.ReadLine().Replace(" ", "").Trim();
 
-            while (input.Length < length)
+            while (input.Length < length || input.Length > 16)
             {
                 Console.Write($" Invalid input length. {length} characters minimum required." + message);
                 input = Console.ReadLine().Replace(" ", "").Trim();

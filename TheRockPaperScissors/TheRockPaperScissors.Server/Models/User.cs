@@ -11,11 +11,11 @@ namespace TheRockPaperScissors.Server.Models
         public Statistics Statistics { get; set; }
 
         [Required]
-        [StringLength(64, MinimumLength = 3)]
+        [StringLength(16, MinimumLength = 4)]
         public string Login { get; set; }
 
         [Required]
-        [StringLength(64, MinimumLength = 6)]
+        [StringLength(16, MinimumLength = 6)]
         public string Password { get; set; }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using System;
 using TheRockPaperScissors.Client.Menu;
 using System.Text;
-
 namespace TheRockPaperScissors.Client.Rules
 {
     public class GameRules
     {
         private readonly MenuDesign _menuDesign = new MenuDesign();
-
         public void LoadRules()
         {
             Console.Clear();
@@ -29,6 +27,7 @@ namespace TheRockPaperScissors.Client.Rules
             Console.WriteLine(" You also have your personal Statistics.");
             _menuDesign.WriteHeader("ADDITIONAL");
             Console.WriteLine(" You can change the color of your interface in Set Color settings.");
+            _menuDesign.WriteInColor("\n Login must be from 4 to 16 characters and Password mush be from 6 to 16 characters.", ConsoleColor.Cyan);
             _menuDesign.WriteInColor("\n You need to login to start playing. And let the force be with you!", ConsoleColor.Cyan);
             Console.Write("\n Press ANY KEY to go back >>");
             Console.ReadKey();
