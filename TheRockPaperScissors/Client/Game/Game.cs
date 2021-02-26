@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using TheRockPaperScissors.Client.Models;
-using System.Text;
 
 namespace TheRockPaperScissors.Client.Game
 {

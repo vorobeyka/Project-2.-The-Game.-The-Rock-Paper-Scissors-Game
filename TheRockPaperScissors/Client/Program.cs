@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using TheRockPaperScissors.Client.Exceptions;
 using TheRockPaperScissors.Client.Menu;
@@ -11,6 +10,7 @@ namespace TheRockPaperScissors.Client
         static async Task Main(string[] args)
         {
             MainMenu menu = new MainMenu();
+
             try
             {
                 await menu.Load(ConsoleColor.Yellow);

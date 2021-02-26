@@ -18,7 +18,7 @@ namespace TheRockPaperScissors.Client.Menu
         public async Task Load(ConsoleColor color)
         {
             Console.ForegroundColor = color;
-            _menuDesign.WriteInColor("\n THE ROCK PAPER SCISSORS \n", ConsoleColor.Cyan);
+            _menuDesign.WriteInColor("\n THE ROCK PAPER SCISSORS by Andrey Basystyi and Emilia Voronova\n", ConsoleColor.Cyan);
             User = await _authorizationMenu.Load(ConsoleColor.Yellow);
             int command = 0;
 

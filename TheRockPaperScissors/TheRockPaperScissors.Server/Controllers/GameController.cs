@@ -17,15 +17,12 @@ namespace TheRockPaperScissors.Server.Controllers
         private readonly ILogger<GameController> _logger;
         private readonly ISeriesStorage _seriesStorage;
         private readonly IUsersStorage _users;
-        private readonly ITimeStorage _timeStorage;
 
         public GameController(
             ISeriesStorage seriesStorage,
             IUsersStorage users,
-            ITimeStorage timeStorage,
             ILogger<GameController> logger)
         {
-            _timeStorage = timeStorage;
             _seriesStorage = seriesStorage;
             _users = users;
             _logger = logger;
