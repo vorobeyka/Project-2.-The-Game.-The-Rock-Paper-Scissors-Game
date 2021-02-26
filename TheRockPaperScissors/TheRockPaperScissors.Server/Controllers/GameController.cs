@@ -17,15 +17,12 @@ namespace TheRockPaperScissors.Server.Controllers
         private readonly ILogger<GameController> _logger;
         private readonly ISeriesStorage _seriesStorage;
         private readonly IUsersStorage _users;
-        private readonly ITimeStorage _timeStorage;
 
         public GameController(
             ISeriesStorage seriesStorage,
             IUsersStorage users,
-            ITimeStorage timeStorage,
             ILogger<GameController> logger)
         {
-            _timeStorage = timeStorage;
             _seriesStorage = seriesStorage;
             _users = users;
             _logger = logger;
@@ -37,14 +34,13 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromBody] Game game)
         {
             var userId = Guid.Parse(game.UserId);
-
             if (!await _users.ContainAsync(userId)) return NotFound($"Not found user with token {userId}");
 
             var openSeries = await _seriesStorage.GetAsync(storage =>
                 storage.FirstOrDefault(s => s.SecondId == null && s.Type == game.Type && s.GameId == game.GameId));
             var foundSeries = openSeries != null;
             if (!foundSeries) openSeries = series;
-            
+
             try
             {
                 openSeries.SetProperties(game);
@@ -77,7 +73,7 @@ namespace TheRockPaperScissors.Server.Controllers
 
         [HttpPost("round")]
         public async Task<ActionResult> Round(
-            [FromBody]Round round,
+            [FromBody] Round round,
             [FromServices] IRoundService roundService)
         {
             var id = Guid.Parse(round.Id);
@@ -97,9 +93,14 @@ namespace TheRockPaperScissors.Server.Controllers
             var user = await _users.GetAsync(id);
             var result = await round.GetResultAsync(id, user.Statistics, game.Type);
 
-            if (game.Timer.IsOutTime() || round.Timer.IsOutTime()) return NotFound();
-            if (string.IsNullOrEmpty(result)) return NotFound();
-            else return Ok(result);
+            if (string.IsNullOrEmpty(result) ||
+                game.Timer.IsOutTime() ||
+                round.Timer.IsOutTime() ||
+                (game.Type == GameType.Training && game.RoundCount == 3))
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         [HttpGet("seriesResult/{token}")]
@@ -121,7 +122,8 @@ namespace TheRockPaperScissors.Server.Controllers
             if (id == series.FirstId) series.FirstId = null;
             else series.SecondId = null;
 
-            if (series.FirstId == null && series.SecondId == null)
+            if (series.FirstId == null && series.SecondId == null
+                || series.Type == GameType.Training)
             {
                 await _seriesStorage.RemoveAsync(series);
             }
