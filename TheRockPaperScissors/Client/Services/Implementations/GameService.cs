@@ -8,7 +8,7 @@ using System.Net;
 
 namespace TheRockPaperScissors.Client.Services
 {
-    public class GameService
+    public class GameService : IGameService
     {
         private readonly HttpClient _httpClient = BaseService.GetInstance().HttpClient;
         private readonly Serialization<MoveObject> _roundSerialization = new Serialization<MoveObject>();

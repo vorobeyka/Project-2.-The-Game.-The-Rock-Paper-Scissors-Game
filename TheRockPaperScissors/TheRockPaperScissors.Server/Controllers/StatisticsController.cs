@@ -25,7 +25,6 @@ namespace TheRockPaperScissors.Server.Controllers
         public async Task<ActionResult<string>> Public()
         {
             var result = await _databaseService.GetPublicStatisticsAsync();
-
             return Ok(result);
         }
 
@@ -33,7 +32,6 @@ namespace TheRockPaperScissors.Server.Controllers
         public async Task<ActionResult<string>> Public([FromRoute(Name = "login")] string login)
         {
             var result = await _databaseService.GetUserStatisticsAsync(login);
-
             return Ok(result);
         }
     }
