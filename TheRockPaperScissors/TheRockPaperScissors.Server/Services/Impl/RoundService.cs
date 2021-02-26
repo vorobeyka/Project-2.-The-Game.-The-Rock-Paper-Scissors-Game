@@ -12,12 +12,14 @@ namespace TheRockPaperScissors.Server.Services.Impl
     public class RoundService : IRoundService
     {
         private readonly ConcurrentDictionary<Guid, string> _result = new ConcurrentDictionary<Guid, string>();
+        public ConcurrentDictionary<Guid, GameResult> Result { get; set; }
         public ITimeService Timer { get; }
         public ConcurrentDictionary<Guid, Move> Moves { get; }
         public bool IsOpen => Moves.Count < 2;
 
         public RoundService(ITimeService timeService)
         {
+            Result = new ConcurrentDictionary<Guid, GameResult>();
             Moves = new ConcurrentDictionary<Guid, Move>();
             Timer = timeService;
             Timer.StartTime(TimeSpan.FromSeconds(20));
