@@ -59,7 +59,6 @@ namespace TheRockPaperScissors.Server.Services.Impl
             var gameResult = GameAlgorithm.GetRound(firstPlayerMove, secondPlayerMove);
             statistics.UpdateMove(firstPlayerMove);
             statistics.UpdateResult(gameResult);
-            statistics.UpdateTime(Timer.GetTime());
 
             switch (gameResult)
             {

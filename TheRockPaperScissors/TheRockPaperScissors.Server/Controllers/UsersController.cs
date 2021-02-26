@@ -35,7 +35,8 @@ namespace TheRockPaperScissors.Server.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (await _authorizedUsers.ContainValueAsync(user)) return BadRequest("User are authorized");
 
-            var token = await _userService.LoginUserAsync(user.Login, user.Password);
+            var loginResult = await _userService.LoginUserAsync(user.Login, user.Password);
+            var token = loginResult.Item1;
 
             if (token == null)
             {
@@ -45,8 +46,7 @@ namespace TheRockPaperScissors.Server.Controllers
             }
 
             _logger.LogInformation($"Success to login {user.Login}");
-            user.Statistics = new Statistics();
-            await _authorizedUsers.AddAsync((Guid)token, user);
+            await _authorizedUsers.AddAsync((Guid)token, loginResult.Item2);
 
             return Ok(token);
         }

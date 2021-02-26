@@ -16,7 +16,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public ITimeService Timer { get; }
-        public Guid FirstId { get; set; }
+        public Guid? FirstId { get; set; }
         public Guid? SecondId { get; set; }
         public GameType Type { get; set; }
         public string GameId { get; set; }
@@ -103,7 +103,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
 
             for (int i = 0; i < roundResults.Length; i++)
             {
-                roundResults[i] = $"Round {i + 1}|" + roundResults[i] + " " + new string('_', 16) + "|";
+                roundResults[i] = $" Round {i + 1}|" + roundResults[i] + " " + new string('_', 16) + "|";
             }
 
             return string.Concat(roundResults);

@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
-using System.Net.Mime;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TheRockPaperScissors.Server.Enums;
 using TheRockPaperScissors.Server.Exceptions;
 using TheRockPaperScissors.Server.Models;
 using TheRockPaperScissors.Server.Services;
@@ -110,10 +105,20 @@ namespace TheRockPaperScissors.Server.Controllers
         {
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetByIdAsync(id);
+            var user = await _users.GetAsync(id);
+            var result = series.GetResult(id);
 
-            await databaseService.UpdateUserAsync(await _users.GetAsync(id));
+            user.Statistics.UpdateTime(series.Timer.GetTime());
+            await databaseService.UpdateUserAsync(user);
 
-            return Ok(series.GetResult(id));
+            if (id == series.FirstId) series.FirstId = null;
+            else series.SecondId = null;
+
+            if (series.FirstId == null && series.SecondId == null)
+            {
+                await _seriesStorage.RemoveAsync(series);
+            }
+            return Ok(result);
         }
     }
 }

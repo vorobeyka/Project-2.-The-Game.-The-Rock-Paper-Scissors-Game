@@ -19,15 +19,15 @@ namespace TheRockPaperScissors.Server.Services.Impl
             _users = db.GetAllUsers();
         }
 
-        public async Task<Guid?> LoginUserAsync(string login, string password)
+        public async Task<(Guid?, User)> LoginUserAsync(string login, string password)
         {
             await _semaphoreSlim.WaitAsync();
             var user = _users.FirstOrDefault(user => user.Login == login && user.Password == password);
             _semaphoreSlim.Release();
 
-            if (user == null) return null;
+            if (user == null) return (null, null);
             
-            return Guid.NewGuid();
+            return (Guid.NewGuid(), user);
         }
 
         public async Task<Guid?> RegisterUserAsync(User user)

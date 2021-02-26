@@ -10,6 +10,6 @@ namespace TheRockPaperScissors.Server.Services
     public interface IUserService
     {
         Task<Guid?> RegisterUserAsync(User user);
-        Task<Guid?> LoginUserAsync(string login, string password);
+        Task<(Guid?, User)> LoginUserAsync(string login, string password);
     }
 }

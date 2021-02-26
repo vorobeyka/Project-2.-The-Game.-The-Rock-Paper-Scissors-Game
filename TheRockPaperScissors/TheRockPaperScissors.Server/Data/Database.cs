@@ -36,30 +36,6 @@ namespace TheRockPaperScissors.Server.Data
             connection.Close();
         }
 
-        /*public User GetUser(string login)
-        {
-            try
-            {
-                var table = new DataTable();
-                var adapter = new SQLiteDataAdapter(
-                    $@"select * from [users] where login='{login}'",
-                    _connectionString);
-                adapter.Fill(table);
-                var row = table.AsEnumerable().FirstOrDefault() ?? throw new NullReferenceException();
-                var user = new User()
-                {
-                    Login = row.Field<string>("login"),
-                    Password = row.Field<string>("password")
-                };
-                return user;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
-        }*/
-
         public string GetPublicStatistics()
         {
             var table = new DataTable();
@@ -97,7 +73,7 @@ namespace TheRockPaperScissors.Server.Data
                 Console.WriteLine(ex);
                 return null;
             }
-            return string.Join("| ", table.AsEnumerable().First().ItemArray.Skip(2));
+            return string.Join("| ", table.AsEnumerable().First().ItemArray.Skip(3));
         }
 
         public IList<User> GetAllUsers()
