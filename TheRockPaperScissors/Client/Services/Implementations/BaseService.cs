@@ -30,6 +30,7 @@ namespace TheRockPaperScissors.Client.Services
             {
                 _instance = new BaseService();
             }
+
             return _instance;
         }
     }

@@ -15,6 +15,7 @@ namespace TheRockPaperScissors.Client.Services
         public Deserialization(string path)
         {
             Path = path;
+
             try
             {
                 var json = File.ReadAllText(Path);

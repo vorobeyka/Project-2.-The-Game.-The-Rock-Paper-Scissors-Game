@@ -12,6 +12,7 @@ namespace TheRockPaperScissors.Client.Menu
         private readonly MenuValidation _menuValidation = new MenuValidation();
         private readonly GameConnectService _gameConnectService = new GameConnectService();
         private readonly GameService _gameService = new GameService();
+        private readonly ResultMenu _resultMenu = new ResultMenu();
 
         public async Task Load(ConsoleColor color, User user)
         {
@@ -65,11 +66,10 @@ namespace TheRockPaperScissors.Client.Menu
                 Console.WriteLine(" Waiting for another player...");
                 await _gameService.StartGame(user.Id);
 
-                //MAKE MOVES
                 while (true)
                 {
                     await MakeMove(user.Id, roomId);
-                    var message = await GetResult(user.Id);
+                    var message = await _resultMenu.GetResult(user.Id);
                     if (message.Item1 == false) break;
 
                     _menuDesign.WriteHeader("result");
@@ -80,7 +80,7 @@ namespace TheRockPaperScissors.Client.Menu
                     Console.ReadKey();
                 }
 
-                await ShowSeriesResult(user.Id);               
+                await _resultMenu.ShowSeriesResult(user.Id);               
             }
             catch (Exception ex)
             {
@@ -104,24 +104,6 @@ namespace TheRockPaperScissors.Client.Menu
 
             var move = _menuValidation.CheckInteger(" Make a move >> ", number - 1) - 1;
             await _gameService.StartRound(token, (Move)move);
-        }
-
-        public async Task<(bool, string)> GetResult(Guid token)
-        {
-            return await _gameService.GetRoundResult(token);
-        }
-
-        public async Task ShowSeriesResult(Guid token)
-        {
-            _menuDesign.WriteHeader("final result");
-            var message = await _gameService.GetSeriesResult(token);
-            var toPrint = " " + (string.IsNullOrEmpty(message)
-                ? "No series has been played"
-                : message.Replace("|", "\n").Replace("~", " ").Replace("\"", ""));
-            Console.WriteLine(toPrint);
-            Console.WriteLine("\n Press ANY KEY for return in menu");
-            Console.ReadKey();
-            Console.Clear();
-        }
+        } 
     }
 }

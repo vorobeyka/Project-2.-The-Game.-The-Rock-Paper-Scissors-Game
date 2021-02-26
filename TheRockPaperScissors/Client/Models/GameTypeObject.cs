@@ -1,5 +1,4 @@
-﻿using System;
-using TheRockPaperScissors.Client.Game.Enums;
+﻿using TheRockPaperScissors.Client.Game.Enums;
 
 namespace TheRockPaperScissors.Client.Models
 {

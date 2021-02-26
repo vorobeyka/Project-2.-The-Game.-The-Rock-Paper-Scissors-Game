@@ -33,8 +33,10 @@ namespace TheRockPaperScissors.Client.Services
         {
             var response = await _httpClient.GetAsync($"Game/roundResult/{token}");
             var content = await response.Content.ReadAsStringAsync();
+
             if (response.StatusCode == HttpStatusCode.NotFound)
                 return (false, content);
+
             return (true, content);
         }
 
