@@ -15,7 +15,9 @@ namespace TheRockPaperScissors.Server.Controllers
         private readonly IDatabaseService _databaseService;
         private readonly ILogger<StatisticsController> _logger;
 
-        public StatisticsController(IDatabaseService databaseService, ILogger<StatisticsController> logger)
+        public StatisticsController(
+            IDatabaseService databaseService,
+            ILogger<StatisticsController> logger)
         {
             _databaseService = databaseService;
             _logger = logger;

@@ -35,12 +35,12 @@ namespace TheRockPaperScissors.Server.Services.Impl
             var timer = 0;
 
             if (Timer.IsOutTime()) return "";
-            while (Moves.Count == 1 && timer < 20)
+            while (Moves.Count == 1 && timer < 38)
             {
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(500);
                 timer++;
             }
-            if (timer == 20) return "";
+            if (timer == 38) return "";
 
             var secondId = Moves.First(move => move.Key != id).Key;
             var move1 = Moves[id];

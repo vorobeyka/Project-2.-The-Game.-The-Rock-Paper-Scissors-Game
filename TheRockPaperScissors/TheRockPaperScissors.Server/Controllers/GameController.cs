@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
-using System.Net.Mime;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TheRockPaperScissors.Server.Enums;
 using TheRockPaperScissors.Server.Exceptions;
 using TheRockPaperScissors.Server.Models;
 using TheRockPaperScissors.Server.Services;
@@ -62,7 +57,6 @@ namespace TheRockPaperScissors.Server.Controllers
         [HttpGet("start/{token}")]
         public async Task<ActionResult> Start([FromRoute(Name = "token")] string token)
         {
-            //TODO: start calc time
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetAsync(storage =>
                 storage.FirstOrDefault(series => series.IsRegisteredId(id)));
@@ -99,18 +93,32 @@ namespace TheRockPaperScissors.Server.Controllers
             var user = await _users.GetAsync(id);
             var result = await round.GetResultAsync(id, user.Statistics);
 
-            if (game.Timer.IsOutTime() || round.Timer.IsOutTime()) return NotFound(/*(await GetSeriesResult(token)).Value*/);
-            if (string.IsNullOrEmpty(result)) return NotFound(/*(await GetSeriesResult(token)).Value*/);
+            if (game.Timer.IsOutTime() || round.Timer.IsOutTime()) return NotFound();
+            if (string.IsNullOrEmpty(result)) return NotFound();
             else return Ok(result);
         }
 
         [HttpGet("seriesResult/{token}")]
-        public async Task<ActionResult<string>> GetSeriesResult([FromRoute(Name = "token")] string token)
+        public async Task<ActionResult<string>> GetSeriesResult(
+            [FromRoute(Name = "token")] string token,
+            [FromServices] IDatabaseService databaseService)
         {
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetByIdAsync(id);
-            _logger.LogInformation($"{series.GetResult(id)} \n\n\n");
-            return Ok(series.GetResult(id));
+            var user = await _users.GetAsync(id);
+            var result = series.GetResult(id);
+
+            user.Statistics.UpdateTime(series.Timer.GetTime());
+            await databaseService.UpdateUserAsync(user);
+
+            if (id == series.FirstId) series.FirstId = null;
+            else series.SecondId = null;
+
+            if (series.FirstId == null && series.SecondId == null)
+            {
+                await _seriesStorage.RemoveAsync(series);
+            }
+            return Ok(result);
         }
     }
 }
