@@ -18,11 +18,11 @@ namespace TheRockPaperScissors.Client.Menu
         {
             _menuDesign.WriteHeader("final result");
             var message = await _gameService.GetSeriesResult(token);
-            var toPrint = " " + (string.IsNullOrEmpty(message)
+            var toPrint = (string.IsNullOrEmpty(message)
                 ? "No series has been played"
                 : message.Replace("|", "\n").Replace("~", " ").Replace("\"", ""));
             Console.WriteLine(toPrint);
-            Console.WriteLine("\n Press ANY KEY for return in menu");
+            Console.WriteLine("\n Press ANY KEY for return to menu >> ");
             Console.ReadKey();
             Console.Clear();
         }

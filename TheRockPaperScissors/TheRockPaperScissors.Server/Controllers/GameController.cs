@@ -34,12 +34,16 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromBody] Game game)
         {
             var userId = Guid.Parse(game.UserId);
-            if (!await _users.ContainAsync(userId)) return NotFound($"Not found user with token {userId}");
+
+            if (!await _users.ContainAsync(userId)) 
+                return NotFound($"Not found user with token {userId}");
 
             var openSeries = await _seriesStorage.GetAsync(storage =>
                 storage.FirstOrDefault(s => s.SecondId == null && s.Type == game.Type && s.GameId == game.GameId));
             var foundSeries = openSeries != null;
-            if (!foundSeries) openSeries = series;
+
+            if (!foundSeries) 
+                openSeries = series;
 
             try
             {
@@ -50,7 +54,9 @@ namespace TheRockPaperScissors.Server.Controllers
                 return BadRequest("Invalid game id or game have maximum users");
             }
 
-            if (!foundSeries) await _seriesStorage.AddAsync(openSeries);
+            if (!foundSeries) 
+                await _seriesStorage.AddAsync(openSeries);
+
             return Ok(openSeries.GameId);
         }
 
@@ -62,12 +68,16 @@ namespace TheRockPaperScissors.Server.Controllers
                 storage.FirstOrDefault(series => series.IsRegisteredId(id)));
 
             var time = 0;
+
             while (series.SecondId == null && time < 300)
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 time++;
             }
-            if (time == 300) return NotFound("Time is out! No one connected to you");
+
+            if (time == 300) 
+                return NotFound("Time is out! No one connected to you");
+
             return Ok(true);
         }
 
@@ -80,7 +90,9 @@ namespace TheRockPaperScissors.Server.Controllers
             var series = await _seriesStorage.GetByIdAsync(id);
             var openRound = await series.GetOpenRoundAsync() ?? await series.AddRoundAsync(roundService);
 
-            if (!openRound.AddMove(id, round.Move)) return BadRequest("Can't add move");
+            if (!openRound.AddMove(id, round.Move)) 
+                return BadRequest("Can't add move");
+
             return Ok();
         }
 
@@ -100,6 +112,7 @@ namespace TheRockPaperScissors.Server.Controllers
             {
                 return NotFound();
             }
+
             return Ok(result);
         }
 
@@ -119,14 +132,17 @@ namespace TheRockPaperScissors.Server.Controllers
                 await databaseService.UpdateUserAsync(user);
             }
 
-            if (id == series.FirstId) series.FirstId = null;
-            else series.SecondId = null;
+            if (id == series.FirstId) 
+                series.FirstId = null;
+            else 
+                series.SecondId = null;
 
             if (series.FirstId == null && series.SecondId == null
                 || series.Type == GameType.Training)
             {
                 await _seriesStorage.RemoveAsync(series);
             }
+
             return Ok(result);
         }
     }
