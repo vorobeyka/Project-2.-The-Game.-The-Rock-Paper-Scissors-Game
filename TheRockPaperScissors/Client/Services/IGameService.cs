@@ -1,10 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
+using TheRockPaperScissors.Client.Game.Enums;
 
 namespace TheRockPaperScissors.Client.Services
 {
-    interface IGameService
+    public interface IGameService
     {
+        public Task<string> StartGame(Guid token);
+
+        public Task<string> StartRound(Guid token, Move move);
+
+        public Task<(bool, string)> GetRoundResult(Guid token);
+
+        public Task<string> GetSeriesResult(Guid token);
     }
 }

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using TheRockPaperScissors.Client.Game.Enums;
 
 namespace TheRockPaperScissors.Client.Services
 {
-    public interface IMoveService
+    public interface IStatisticsService
     {
-        public Task MakeMove(Guid token, Move move);
+        public Task<string> GetRating();
+
+        public Task<string> GetStatistics(string login);
     }
 }

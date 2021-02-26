@@ -10,7 +10,7 @@ namespace TheRockPaperScissors.Client.Menu
         public void WriteInColor(string text, ConsoleColor consoleColor)
         {
             Console.ForegroundColor = consoleColor;
-            Console.WriteLine(text);
+            Console.Write(text);
             Console.ForegroundColor = Color;
         }
 

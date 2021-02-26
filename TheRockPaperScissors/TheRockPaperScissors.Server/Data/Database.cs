@@ -17,7 +17,7 @@ namespace TheRockPaperScissors.Server.Data
         {
             if (!File.Exists(_dbName))
             {
-                Console.WriteLine("SOZDANIE BD");
+                Console.WriteLine("Initializing DB");
                 SQLiteConnection.CreateFile(_dbName);
             }
             CreateTable();
