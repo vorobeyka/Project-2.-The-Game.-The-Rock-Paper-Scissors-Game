@@ -36,7 +36,7 @@ namespace TheRockPaperScissors.Server.Data
             connection.Close();
         }
 
-        public User GetUser(string login)
+        /*public User GetUser(string login)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace TheRockPaperScissors.Server.Data
                 Console.WriteLine(ex);
                 return null;
             }
-        }
+        }*/
 
         public string GetPublicStatistics()
         {
@@ -150,7 +150,7 @@ namespace TheRockPaperScissors.Server.Data
                 rock = {user.Statistics.Rock},
                 paper = {user.Statistics.Paper},
                 scissors = {user.Statistics.Scissors},
-                time = {user.Statistics.Time} 
+                time = '{user.Statistics.Time}' 
                 where login='{user.Login}';"
             };
             command.ExecuteNonQuery();

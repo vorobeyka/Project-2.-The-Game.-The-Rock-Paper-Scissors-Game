@@ -62,7 +62,6 @@ namespace TheRockPaperScissors.Server.Controllers
         [HttpGet("start/{token}")]
         public async Task<ActionResult> Start([FromRoute(Name = "token")] string token)
         {
-            //TODO: start calc time
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetAsync(storage =>
                 storage.FirstOrDefault(series => series.IsRegisteredId(id)));
@@ -99,17 +98,21 @@ namespace TheRockPaperScissors.Server.Controllers
             var user = await _users.GetAsync(id);
             var result = await round.GetResultAsync(id, user.Statistics);
 
-            if (game.Timer.IsOutTime() || round.Timer.IsOutTime()) return NotFound(/*(await GetSeriesResult(token)).Value*/);
-            if (string.IsNullOrEmpty(result)) return NotFound(/*(await GetSeriesResult(token)).Value*/);
+            if (game.Timer.IsOutTime() || round.Timer.IsOutTime()) return NotFound();
+            if (string.IsNullOrEmpty(result)) return NotFound();
             else return Ok(result);
         }
 
         [HttpGet("seriesResult/{token}")]
-        public async Task<ActionResult<string>> GetSeriesResult([FromRoute(Name = "token")] string token)
+        public async Task<ActionResult<string>> GetSeriesResult(
+            [FromRoute(Name = "token")] string token,
+            [FromServices] IDatabaseService databaseService)
         {
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetByIdAsync(id);
-            _logger.LogInformation($"{series.GetResult(id)} \n\n\n");
+
+            await databaseService.UpdateUserAsync(await _users.GetAsync(id));
+
             return Ok(series.GetResult(id));
         }
     }

@@ -35,5 +35,12 @@ namespace TheRockPaperScissors.Server.Models
                 case GameResult.Loss: Loses++; break;
             }
         }
+
+        public void UpdateTime(TimeSpan time)
+        {
+            Time = string.IsNullOrEmpty(Time)
+                ? time.ToString()
+                : (TimeSpan.Parse(Time) + time).ToString();
+        }
     }
 }

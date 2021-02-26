@@ -40,10 +40,13 @@ namespace TheRockPaperScissors.Server.Services.Impl
             }
             else
             {
-                user.Statistics = new Statistics()
+                if (user.Statistics == null)
                 {
-                    Time = null
-                };
+                    user.Statistics = new Statistics()
+                    {
+                        Time = null
+                    };
+                }
                 _users.Add(user);
                 _semaphoreSlim.Release();
                 await _db.AddUserAsync(user);
