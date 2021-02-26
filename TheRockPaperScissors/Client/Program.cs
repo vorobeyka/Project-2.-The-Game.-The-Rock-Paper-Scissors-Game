@@ -10,18 +10,22 @@ namespace TheRockPaperScissors.Client
     {
         static async Task Main(string[] args)
         {
+            MainMenu menu = new MainMenu();
             try
             {
-                MainMenu menu = new MainMenu();
                 await menu.Load(ConsoleColor.Yellow);
             }
             catch (AuthorizationFailedException ex)
             {
-                Console.WriteLine(ex.Message + "\n");
+                Console.WriteLine(ex.Message + "\n Press ANY KEY to continue...");
+                Console.ReadKey();
+                await Main(null);
             }
-            catch (HttpRequestException)
+            catch (ServerNotConnectedException ex)
             {
-                Console.WriteLine("\n Oops! Server is not connected...");
+                Console.WriteLine(ex.Message + "\n Press ANY KEY to continue...");
+                Console.ReadKey();
+                await Main(null);
             }
             catch (DeserializationException ex)
             {

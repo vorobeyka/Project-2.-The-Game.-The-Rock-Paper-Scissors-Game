@@ -74,6 +74,7 @@ namespace TheRockPaperScissors.Server.Data
             return string.Join("| ", table.AsEnumerable().First().ItemArray.Skip(3));
         }
 
+
         public IList<User> GetAllUsers()
         {
             IList<User> users = new List<User>();

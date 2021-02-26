@@ -17,20 +17,20 @@ namespace TheRockPaperScissors.Client.Menu
         public void SetConsoleColor()
         {
             WriteHeader("SET MENU COLOR");
-            int number = 1;
+            int number = 2;
 
             foreach (ConsoleColor color in Enum.GetValues(typeof(ConsoleColor)))
             {
-                if (color == ConsoleColor.Black)
+                if (color == ConsoleColor.Black || color == ConsoleColor.DarkBlue)
                     continue;
 
-                WriteInColor($" {number} - {Enum.GetNames(typeof(ConsoleColor))[number]}", color);
+                WriteInColor($" {number-1} - {Enum.GetNames(typeof(ConsoleColor))[number]}\n", color);
                 number++;
             }
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            var num = _menuValidation.CheckInteger(" Choose color >> ", number - 1);
-            Color = (ConsoleColor)Enum.GetValues(typeof(ConsoleColor)).GetValue(num);
+            var num = _menuValidation.CheckInteger(" Choose color >> ", number - 2);
+            Color = (ConsoleColor)Enum.GetValues(typeof(ConsoleColor)).GetValue(num + 1);
             Console.ForegroundColor = Color;
             Console.Clear();
         }

@@ -76,7 +76,7 @@ namespace TheRockPaperScissors.Client.Menu
                     string[] messages = message.Item2.Replace("\"", "").Replace("|", "\n").Split('~');
                     Console.Write(messages[0]);
                     _menuDesign.WriteInColor(" " + messages[1], ConsoleColor.Cyan);
-                    Console.WriteLine("\n Press ANY KEY for the next round >>");
+                    Console.WriteLine("\n Press ANY KEY for next round >> ");
                     Console.ReadKey();
                 }
 
@@ -101,6 +101,7 @@ namespace TheRockPaperScissors.Client.Menu
                 Console.WriteLine($" {number} - {Enum.GetNames(typeof(Move))[number - 1]}");
                 number++;
             }
+
             var move = _menuValidation.CheckInteger(" Make a move >> ", number - 1) - 1;
             await _gameService.StartRound(token, (Move)move);
         }
@@ -114,11 +115,11 @@ namespace TheRockPaperScissors.Client.Menu
         {
             _menuDesign.WriteHeader("final result");
             var message = await _gameService.GetSeriesResult(token);
-            var toPrint = (string.IsNullOrEmpty(message)
-                ? " No series has been played"
+            var toPrint = " " + (string.IsNullOrEmpty(message)
+                ? "No series has been played"
                 : message.Replace("|", "\n").Replace("~", " ").Replace("\"", ""));
             Console.WriteLine(toPrint);
-            Console.WriteLine("\n Press ANY KEY to return to menu >>");
+            Console.WriteLine("\n Press ANY KEY for return in menu");
             Console.ReadKey();
             Console.Clear();
         }
