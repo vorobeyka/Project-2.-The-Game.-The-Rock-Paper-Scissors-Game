@@ -17,11 +17,10 @@ namespace TheRockPaperScissors.Client.StatisticsAndRating
             Console.Clear();
             _menuDesign.WriteHeader("statistics");
             string statistics = await _statisticsService.GetStatistics(login);
-            string[] stats = statistics.Replace("\"", "").Split("|");
-            string[] headers = new string[] { "Name", "Wins", "Draws", "Loses", "Rock", "Paper", "Scissors" };
+            string[] stats = statistics.Split(".")[0].Replace("\"", "").Split("|");
+            string[] headers = new string[] { "Wins      ", "Draws    ", "Loses    ", "Rock     ", "Paper    ", "Scissors " , "Game Time"};
 
-            _menuDesign.WriteInColor(" " + stats[0] + "\n", ConsoleColor.Cyan);
-            for (int i = 1; i < stats.Length - 1; i++)
+            for (int i = 0; i < stats.Length; i++)
                 Console.WriteLine( " " + headers[i] + " " + stats[i]);
 
             _menuDesign.WriteInColor(" Press any key to go back >> ", ConsoleColor.Cyan);
@@ -33,8 +32,21 @@ namespace TheRockPaperScissors.Client.StatisticsAndRating
             Console.Clear();
             _menuDesign.WriteHeader("rating");
             string rating = await _statisticsService.GetRating();
-            Console.WriteLine(rating);
-            _menuDesign.WriteInColor(" Press any key to go back >> ", ConsoleColor.Cyan);
+            _menuDesign.WriteInColor(" №  Nickname         Wins     Loses\n", ConsoleColor.Cyan);
+            string[] rates = rating.Replace("\"", "").Split("|");
+
+            for (int i = 0; i < rates.Length; i++)
+            {
+                if (i < 3)
+                    if(i == 0)
+                        _menuDesign.WriteInColor($" {i + 1}. " + rates[i] + "\n", ConsoleColor.Green);
+                    else
+                        _menuDesign.WriteInColor($" {i + 1}." + rates[i] + "\n", ConsoleColor.Green);
+                else
+                    Console.WriteLine($" {i + 1}." + rates[i]);
+            }
+               
+            _menuDesign.WriteInColor("\n Press any key to go back >> ", ConsoleColor.Cyan);
             Console.ReadKey();
         }
     }

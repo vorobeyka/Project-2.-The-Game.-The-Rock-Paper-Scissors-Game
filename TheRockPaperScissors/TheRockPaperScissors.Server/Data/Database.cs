@@ -40,8 +40,7 @@ namespace TheRockPaperScissors.Server.Data
         {
             var table = new DataTable();
             var adapter = new SQLiteDataAdapter(
-                    @"select * from users order by wins descending 
-                    where (wins + loses + draws) > 10;",
+                    @"select * from users where (wins + loses + draws) > 10 order by wins desc;",
                     _connectionString);
             try
             {
@@ -53,7 +52,7 @@ namespace TheRockPaperScissors.Server.Data
             }
             return string.Join("| ",
                 table.AsEnumerable().Select(row =>
-                    row.Field<string>("login").PadRight(16, ' ') + " " + 
+                    row.Field<string>("login").PadRight(16, ' ') + " " +
                     row.Field<Int64>("wins").ToString().PadRight(8, ' ') + " " +
                     row.Field<Int64>("loses").ToString()));
         }
@@ -68,13 +67,13 @@ namespace TheRockPaperScissors.Server.Data
             {
                 adapter.Fill(table);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex);
                 return null;
             }
             return string.Join("| ", table.AsEnumerable().First().ItemArray.Skip(3));
         }
+
 
         public IList<User> GetAllUsers()
         {

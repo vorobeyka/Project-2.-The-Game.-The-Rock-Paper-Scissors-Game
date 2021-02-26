@@ -22,7 +22,7 @@ namespace TheRockPaperScissors.Client.Menu
             User = await _authorizationMenu.Load(ConsoleColor.Yellow);
             int command = 0;
 
-            while (command != 5)
+            while (command != 5 && User != null)
             {
                 Console.Clear();
                 Console.WriteLine($" USER : {User.Login}");
