@@ -14,13 +14,19 @@ namespace TheRockPaperScissors.Server.Services.Impl
     {
         private readonly IList<IRoundService> _rounds = new List<IRoundService>();
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
-        private readonly ConcurrentDictionary<Guid, string> _result = new ConcurrentDictionary<Guid, string>();
 
+        public ITimeService Timer { get; }
         public Guid FirstId { get; set; }
         public Guid? SecondId { get; set; }
         public GameType Type { get; set; }
         public string GameId { get; set; }
         public int RoundCount => _rounds.Count();
+
+        public SeriesService(ITimeService timeService)
+        {
+            Timer = timeService;
+            Timer.StartTime(TimeSpan.FromSeconds(300));
+        }
 
         public bool IsRegisteredId(Guid id)
         {
@@ -92,9 +98,15 @@ namespace TheRockPaperScissors.Server.Services.Impl
 
         public string GetResult(Guid id)
         {
-            return string.Concat(_rounds
-                .Where(round => !round.IsOpen)
-                .Select(round => round.GetResult(id)));
+            var roundResults = _rounds.Where(round => !round.IsOpen)
+                                      .Select(round => round.GetResult(id) + "|").ToArray();
+
+            for (int i = 0; i < roundResults.Length; i++)
+            {
+                roundResults[i] = $"Round {i + 1}|" + roundResults[i] + " " + new string('_', 16) + "|";
+            }
+
+            return string.Concat(roundResults);
         }
     }
 }

@@ -33,6 +33,7 @@ namespace TheRockPaperScissors.Server
 
             services.AddTransient<ISeriesService, SeriesService>();
             services.AddTransient<IRoundService, RoundService>();
+            services.AddTransient<ITimeService, TimeService>();
 
             services.AddControllers();
         }

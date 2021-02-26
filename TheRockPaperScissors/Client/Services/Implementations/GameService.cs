@@ -29,14 +29,13 @@ namespace TheRockPaperScissors.Client.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> GetRoundResult(Guid token)
+        public async Task<(bool, string)> GetRoundResult(Guid token)
         {
             var response = await _httpClient.GetAsync($"Game/roundResult/{token}");
+            var content = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.NotFound)
-                return "Left";
-            else if (response.StatusCode == HttpStatusCode.Created)
-                return "Over";
-            return await response.Content.ReadAsStringAsync();
+                return (false, content);
+            return (true, content);
         }
 
         public async Task<string> GetSeriesResult(Guid token)

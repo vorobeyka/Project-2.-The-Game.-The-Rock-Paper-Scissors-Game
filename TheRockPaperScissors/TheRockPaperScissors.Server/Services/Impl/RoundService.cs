@@ -12,16 +12,20 @@ namespace TheRockPaperScissors.Server.Services.Impl
     public class RoundService : IRoundService
     {
         private readonly ConcurrentDictionary<Guid, string> _result = new ConcurrentDictionary<Guid, string>();
+        public ITimeService Timer { get; }
         public ConcurrentDictionary<Guid, Move> Moves { get; }
         public bool IsOpen => Moves.Count < 2;
 
-        public RoundService()
+        public RoundService(ITimeService timeService)
         {
             Moves = new ConcurrentDictionary<Guid, Move>();
+            Timer = timeService;
+            Timer.StartTime(TimeSpan.FromSeconds(20));
         }
 
         public bool AddMove(Guid id, Move move)
         {
+            if (Timer.IsOutTime()) return true;
             return Moves.TryAdd(id, move);
         }
 
@@ -30,12 +34,12 @@ namespace TheRockPaperScissors.Server.Services.Impl
             await Task.Delay(100);
             var timer = 0;
 
+            if (Timer.IsOutTime()) return "";
             while (Moves.Count == 1 && timer < 20)
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 timer++;
             }
-
             if (timer == 20) return "";
 
             var secondId = Moves.First(move => move.Key != id).Key;
@@ -47,7 +51,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
             return _result[id];
         }
 
-        public string GetResult(Guid id) => _result[id];
+        public string GetResult(Guid id) => Moves.Count != 1 ? _result[id] : null;
 
         private string GetResultString(Move firstPlayerMove, Move secondPlayerMove, Statistics statistics)
         {
