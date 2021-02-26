@@ -10,6 +10,7 @@ namespace TheRockPaperScissors.Server.Services
 {
     public interface IRoundService
     {
+        ConcurrentDictionary<Guid, GameResult> Result { get; set; }
         ITimeService Timer { get; }
         bool IsOpen { get; }
 

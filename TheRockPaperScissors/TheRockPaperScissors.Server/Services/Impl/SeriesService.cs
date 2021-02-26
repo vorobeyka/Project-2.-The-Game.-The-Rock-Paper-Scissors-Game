@@ -98,7 +98,9 @@ namespace TheRockPaperScissors.Server.Services.Impl
 
         public string GetResult(Guid id)
         {
-            //var wins = _rounds.Where(round => round.)
+            var wins = _rounds.Where(round => round.Result[id] == GameResult.Win).Count();
+            var lose = _rounds.Where(round => round.Result[id] == GameResult.Loss).Count();
+            var stats = $"wins {wins} : {lose} loses";
             var roundResults = _rounds.Where(round => !round.IsOpen)
                                       .Select(round => round.GetResult(id) + "|").ToArray();
 
@@ -107,7 +109,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
                 roundResults[i] = $" Round {i + 1}|" + roundResults[i] + " " + new string('_', 16) + "|";
             }
 
-            return string.Concat(roundResults);
+            return string.Concat(roundResults) + " " + stats;
         }
     }
 }

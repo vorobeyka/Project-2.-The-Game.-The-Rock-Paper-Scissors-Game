@@ -13,6 +13,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
     {
         private readonly ConcurrentDictionary<Guid, string> _result = new ConcurrentDictionary<Guid, string>();
         private readonly ConcurrentDictionary<Guid, Move> _moves;
+
         private GameType? _type = null;
         public ConcurrentDictionary<Guid, GameResult> Result { get; set; }
         public ITimeService Timer { get; }
@@ -50,7 +51,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
             var move1 = _moves[id];
             var move2 = _moves.First(move => move.Key != id).Value;
 
-            _result.TryAdd(id, GetResultString(_moves[id], _moves[secondId], statistics));
+            _result.TryAdd(id, GetResultString(_moves[id], _moves[secondId], statistics, id));
 
             return _result[id];
         }
@@ -64,10 +65,11 @@ namespace TheRockPaperScissors.Server.Services.Impl
 
         public string GetResult(Guid id) => _moves.Count != 1 ? _result[id] : null;
 
-        private string GetResultString(Move firstPlayerMove, Move secondPlayerMove, Statistics statistics)
+        private string GetResultString(Move firstPlayerMove, Move secondPlayerMove, Statistics statistics, Guid id)
         {
             var result = $" You      : {firstPlayerMove}| Opponent : {secondPlayerMove}|~";
             var gameResult = GameAlgorithm.GetRound(firstPlayerMove, secondPlayerMove);
+            Result[id] = gameResult;
             if (_type != GameType.Training)
             {
                 statistics.UpdateMove(firstPlayerMove);
