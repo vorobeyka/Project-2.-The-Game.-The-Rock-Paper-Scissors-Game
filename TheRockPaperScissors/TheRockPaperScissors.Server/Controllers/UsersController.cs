@@ -8,7 +8,6 @@ using TheRockPaperScissors.Server.Services;
 using TheRockPaperScissors.Server.Models;
 using System.Net.Mime;
 using TheRockPaperScissors.Server.Services.Impl;
-using System.Linq;
 
 namespace TheRockPaperScissors.Server.Controllers
 {
@@ -46,6 +45,7 @@ namespace TheRockPaperScissors.Server.Controllers
             }
 
             _logger.LogInformation($"Success to login {user.Login}");
+            user.Statistics = new Statistics();
             await _authorizedUsers.AddAsync((Guid)token, user);
 
             return Ok(token);

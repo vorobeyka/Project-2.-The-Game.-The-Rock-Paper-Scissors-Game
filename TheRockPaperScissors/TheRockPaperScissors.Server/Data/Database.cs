@@ -10,7 +10,7 @@ namespace TheRockPaperScissors.Server.Data
 {
     public class Database
     {
-        private static readonly string _dbName = "Client.db";
+        private static readonly string _dbName = "Server.db";
         private readonly string _connectionString = "Data Source = " + AppDomain.CurrentDomain.BaseDirectory + _dbName;
 
         public Database()
@@ -19,8 +19,8 @@ namespace TheRockPaperScissors.Server.Data
             {
                 Console.WriteLine("SOZDANIE BD");
                 SQLiteConnection.CreateFile(_dbName);
-                CreateTable();
             }
+            CreateTable();
         }
 
         public void AddUser(User user)
@@ -53,8 +53,9 @@ namespace TheRockPaperScissors.Server.Data
                 };
                 return user;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return null;
             }
         }
@@ -77,8 +78,8 @@ namespace TheRockPaperScissors.Server.Data
             return string.Join("| ",
                 table.AsEnumerable().Select(row =>
                     row.Field<string>("login").PadRight(16, ' ') + " " + 
-                    row.Field<int>("wins").ToString().PadRight(8, ' ') + " " +
-                    row.Field<int>("loses").ToString()));
+                    row.Field<Int64>("wins").ToString().PadRight(8, ' ') + " " +
+                    row.Field<Int64>("loses").ToString()));
         }
 
         public string GetUserStatistics(string login)
@@ -91,8 +92,9 @@ namespace TheRockPaperScissors.Server.Data
             {
                 adapter.Fill(table);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return null;
             }
             return string.Join("| ", table.AsEnumerable().First().ItemArray.Skip(2));
@@ -107,8 +109,9 @@ namespace TheRockPaperScissors.Server.Data
             {
                 adapter.Fill(table);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return users;
             }
             table.AsEnumerable().ToList().ForEach(row =>
@@ -118,12 +121,12 @@ namespace TheRockPaperScissors.Server.Data
                     Password = row.Field<string>("password"),
                     Statistics = new Statistics()
                     {
-                        Wins = row.Field<int>("wins"),
-                        Loses = row.Field<int>("loses"),
-                        Draws = row.Field<int>("draws"),
-                        Rock = row.Field<int>("rock"),
-                        Paper = row.Field<int>("paper"),
-                        Scissors = row.Field<int>("scissors"),
+                        Wins = (int)row.Field<Int64>("wins"),
+                        Loses = (int)row.Field<Int64>("loses"),
+                        Draws = (int)row.Field<Int64>("draws"),
+                        Rock = (int)row.Field<Int64>("rock"),
+                        Paper = (int)row.Field<Int64>("paper"),
+                        Scissors = (int)row.Field<Int64>("scissors"),
                         Time = row.Field<string>("time")
                     }
                 }));
@@ -160,7 +163,7 @@ namespace TheRockPaperScissors.Server.Data
 
             using var command = new SQLiteCommand(connection)
             {
-                CommandText = @"create table [users](
+                CommandText = @"create table if not exists [users](
                 [id] integer primary key autoincrement not null,
                 [login] char(100) not null,
                 [password] char(100) not null,

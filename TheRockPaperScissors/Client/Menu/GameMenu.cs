@@ -65,19 +65,22 @@ namespace TheRockPaperScissors.Client.Menu
                 Console.WriteLine(" Waiting for another player...");
                 await _gameService.StartGame(user.Id);
 
-                string message = "";
-                while (message != "Over" || message != "Left")
+                //MAKE MOVES
+                while (true)
                 {
                     await MakeMove(user.Id, roomId);
-                    message = await GetResult(user.Id);
+                    var message = await GetResult(user.Id);
+                    if (message.Item1 == false) break;
+
                     _menuDesign.WriteHeader("result");
-                    string[] messages = message.Replace("\"", "").Replace("|", "\n").Split('~');
+                    string[] messages = message.Item2.Replace("\"", "").Replace("|", "\n").Split('~');
                     Console.Write(messages[0]);
                     _menuDesign.WriteInColor(" " + messages[1], ConsoleColor.Cyan);
-                    Console.WriteLine("\n Press ENTER for next round >> ");
+                    Console.WriteLine("\n Press ANY KEY for next round >> ");
                     Console.ReadKey();
                 }
-                Console.ReadKey();
+
+                await ShowSeriesResult(user.Id, null);               
             }
             catch (Exception ex)
             {
@@ -102,20 +105,22 @@ namespace TheRockPaperScissors.Client.Menu
             await _gameService.StartRound(token, (Move)move);
         }
 
-        public async Task<string> GetResult(Guid token)
+        public async Task<(bool, string)> GetResult(Guid token)
         {
-            var result = await _gameService.GetRoundResult(token);
-            if (result == "Left")
-                return await ShowSessionResult(token, "Your opponent left.");
-            else if (result == "Over")
-                return await ShowSessionResult(token, "Game over.");
             return await _gameService.GetRoundResult(token);
         }
 
-        public async Task<string> ShowSessionResult(Guid token, string status)
+        public async Task ShowSeriesResult(Guid token, string status)
         {
             _menuDesign.WriteHeader("final result");
-            return await _gameService.GetSeriesResult(token);
+            var message = await _gameService.GetSeriesResult(token);
+            var toPrint = " " + (string.IsNullOrEmpty(message)
+                ? "No series has been played"
+                : message.Replace("|", "\n").Replace("~", " ").Replace("\"", ""));
+            Console.WriteLine(toPrint);
+            Console.WriteLine("\n Press ANY KEY for return in menu");
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 }

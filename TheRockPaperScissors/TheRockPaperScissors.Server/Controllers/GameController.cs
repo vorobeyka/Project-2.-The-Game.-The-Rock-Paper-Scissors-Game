@@ -37,7 +37,6 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromServices] ISeriesService series,
             [FromBody] Game game)
         {
-            await Task.Delay(500);
             var userId = Guid.Parse(game.UserId);
 
             if (!await _users.ContainAsync(userId)) return NotFound($"Not found user with token {userId}");
@@ -63,7 +62,7 @@ namespace TheRockPaperScissors.Server.Controllers
         [HttpGet("start/{token}")]
         public async Task<ActionResult> Start([FromRoute(Name = "token")] string token)
         {
-            await Task.Delay(500);
+            //TODO: start calc time
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetAsync(storage =>
                 storage.FirstOrDefault(series => series.IsRegisteredId(id)));
@@ -83,7 +82,6 @@ namespace TheRockPaperScissors.Server.Controllers
             [FromBody]Round round,
             [FromServices] IRoundService roundService)
         {
-            await Task.Delay(500);
             var id = Guid.Parse(round.Id);
             var series = await _seriesStorage.GetByIdAsync(id);
             var openRound = await series.GetOpenRoundAsync() ?? await series.AddRoundAsync(roundService);
@@ -93,26 +91,25 @@ namespace TheRockPaperScissors.Server.Controllers
         }
 
         [HttpGet("roundResult/{token}")]
-        public async Task<ActionResult> GetRoundResult([FromRoute(Name = "token")] string token)
+        public async Task<ActionResult<string>> GetRoundResult([FromRoute(Name = "token")] string token)
         {
-            await Task.Delay(500);
             var id = Guid.Parse(token);
             var game = await _seriesStorage.GetByIdAsync(id);
             var round = await game.GetLastRoundAsync();
             var user = await _users.GetAsync(id);
             var result = await round.GetResultAsync(id, user.Statistics);
-            
-            //HttpStatusCode.Created
-            if (string.IsNullOrEmpty(result)) return NotFound();
+
+            if (game.Timer.IsOutTime() || round.Timer.IsOutTime()) return NotFound(/*(await GetSeriesResult(token)).Value*/);
+            if (string.IsNullOrEmpty(result)) return NotFound(/*(await GetSeriesResult(token)).Value*/);
             else return Ok(result);
         }
 
         [HttpGet("seriesResult/{token}")]
-        public async Task<ActionResult> GetSeriesResult([FromRoute(Name = "token")] string token)
+        public async Task<ActionResult<string>> GetSeriesResult([FromRoute(Name = "token")] string token)
         {
-            await Task.Delay(500);
             var id = Guid.Parse(token);
             var series = await _seriesStorage.GetByIdAsync(id);
+            _logger.LogInformation($"{series.GetResult(id)} \n\n\n");
             return Ok(series.GetResult(id));
         }
     }

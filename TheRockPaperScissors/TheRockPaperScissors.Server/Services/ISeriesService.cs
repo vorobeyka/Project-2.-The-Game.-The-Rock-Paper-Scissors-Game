@@ -10,6 +10,7 @@ namespace TheRockPaperScissors.Server.Services
 {
     public interface ISeriesService
     {
+        ITimeService Timer { get; }
         Guid FirstId { get; set; }
         Guid? SecondId { get; set; }
         GameType Type { get; set; }
