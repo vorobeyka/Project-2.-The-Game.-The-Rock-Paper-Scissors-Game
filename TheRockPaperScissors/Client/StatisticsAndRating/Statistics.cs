@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using TheRockPaperScissors.Client.Menu;
 using TheRockPaperScissors.Client.Services;
@@ -36,7 +38,7 @@ namespace TheRockPaperScissors.Client.StatisticsAndRating
             for (int i = 0; i < rates.Length; i++)
             {
                 if (i < 3)
-                    if(i == 0)
+                    if (i == 0)
                         _menuDesign.WriteInColor($" {i + 1}. " + rates[i] + "\n", ConsoleColor.Green);
                     else
                         _menuDesign.WriteInColor($" {i + 1}." + rates[i] + "\n", ConsoleColor.Green);

@@ -32,16 +32,19 @@ namespace TheRockPaperScissors.Server.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Guid>> Login([FromBody]User user)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            if (await _authorizedUsers.ContainValueAsync(user)) return BadRequest("User are authorized");
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
 
-            var loginResult = await _userService.LoginUserAsync(user.Login, user.Password);
+            if (await _authorizedUsers.ContainValueAsync(user)) 
+                return BadRequest("User are authorized");
+
+            var loginResult = await _userService.LoginUserAsync(user.Login, GetHashString(user.Password));
+            Console.WriteLine(user.Password);
             var token = loginResult.Item1;
 
             if (token == null)
             {
                 _logger.LogInformation($"Invalid login '{user.Login}' or password '{user.Password}'");
-                
                 return BadRequest($"Invalid login or password");
             }
 
@@ -55,10 +58,12 @@ namespace TheRockPaperScissors.Server.Controllers
         public async Task<ActionResult<Guid>> Register(
             [FromBody]User user)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
+            var hash = GetHashString(user.Password);
+            user.Password = hash;
             var token = await _userService.RegisterUserAsync(user);
-
+            Console.WriteLine(user.Password);
             if (token != null)
             {
                 _logger.LogInformation($"Registered user with login '{user.Login}'");
@@ -71,17 +76,10 @@ namespace TheRockPaperScissors.Server.Controllers
 
         public string GetHashString(string s)
         {
-            //переводим строку в байт-массим  
             byte[] bytes = Encoding.Unicode.GetBytes(s);
-
-            //создаем объект для получения средст шифрования  
             MD5CryptoServiceProvider CSP = new MD5CryptoServiceProvider();
-
-            //вычисляем хеш-представление в байтах  
             byte[] byteHash = CSP.ComputeHash(bytes);
             string hash = string.Empty;
-
-            //формируем одну цельную строку из массива  
             foreach (byte b in byteHash)
                 hash += string.Format("{0:x2}", b);
 
