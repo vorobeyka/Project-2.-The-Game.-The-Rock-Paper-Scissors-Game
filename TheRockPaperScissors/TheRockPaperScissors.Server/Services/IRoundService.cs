@@ -11,11 +11,10 @@ namespace TheRockPaperScissors.Server.Services
     public interface IRoundService
     {
         ITimeService Timer { get; }
-        ConcurrentDictionary<Guid, Move> Moves { get; }
         bool IsOpen { get; }
 
         bool AddMove(Guid id, Move move);
-        Task<string> GetResultAsync(Guid id, Statistics statistics);
+        Task<string> GetResultAsync(Guid id, Statistics statistics, GameType type);
         string GetResult(Guid id);
     }
 }

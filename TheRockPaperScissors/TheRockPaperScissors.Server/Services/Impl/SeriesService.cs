@@ -98,6 +98,7 @@ namespace TheRockPaperScissors.Server.Services.Impl
 
         public string GetResult(Guid id)
         {
+            //var wins = _rounds.Where(round => round.)
             var roundResults = _rounds.Where(round => !round.IsOpen)
                                       .Select(round => round.GetResult(id) + "|").ToArray();
 
